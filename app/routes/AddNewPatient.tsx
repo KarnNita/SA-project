@@ -134,9 +134,9 @@ function AddNewPatient() {
           </div>
 
           <div style={styles.formGroup}>
-            <label htmlFor="appointmentDate">Appointment Date:</label>
+            <label htmlFor="appointmentDate">Appointment Date & Time:</label>
             <input
-              type="date"
+              type="datetime-local"
               id="appointmentDate"
               name="appointmentDate"
               value={formData.appointmentDate}
@@ -205,7 +205,6 @@ const styles = {
     fontSize: "0.8em",
     borderRadius: "10px",
   },
-
   saveButton: {
     padding: "10px 20px",
     backgroundColor: "#1FA1AF",

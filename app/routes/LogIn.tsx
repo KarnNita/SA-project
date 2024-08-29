@@ -1,27 +1,23 @@
 import React, { useState } from "react";
 
 function LogIn() {
-  // State to store form inputs
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // Handle form submission
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Basic validation
-    if (!email || !password) {
+    if (!username || !password) {
       setError("Please fill in all fields.");
       return;
     }
 
-    // Here you can add the logic to authenticate the user
-    console.log("Username:", email);
+    console.log("Username:", username);
     console.log("Password:", password);
 
     // Clear the form
-    setEmail("");
+    setUsername("");
     setPassword("");
     setError("");
   };
@@ -29,21 +25,26 @@ function LogIn() {
   return (
     <div style={styles.container}>
       <div style={styles.formWrapper}>
-        <h2>Log In</h2>
+        <h1 style={styles.heading}>CLINIC</h1>
+        <div style={styles.line}></div> {/* Black line under the heading */}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="Username" style={{ display: "block", marginBottom: "5px" }}>Email:</label>
+            <label htmlFor="username" style={{ display: "block", marginBottom: "5px" }}>
+              Username:
+            </label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               style={styles.input}
               required
             />
           </div>
           <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="password" style={{ display: "block", marginBottom: "5px" }}>Password:</label>
+            <label htmlFor="password" style={{ display: "block", marginBottom: "5px" }}>
+              Password:
+            </label>
             <input
               type="password"
               id="password"
@@ -69,20 +70,26 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh", // Full viewport height
-    backgroundColor: "#f5f5f5", // Light background for contrast
+    height: "100vh",
+    backgroundColor: "#f5f5f5",
   },
   formWrapper: {
-    padding: "20px",
+    padding: "50px",
     border: "1px solid #ccc",
     borderRadius: "8px",
     backgroundColor: "#fff",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)", // Optional: add some shadow
+    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+    maxWidth: "400px", 
+    width: "100%",
+    // textAlign: "center", // Center the content inside the formWrapper
   },
   input: {
     width: "100%",
-    padding: "8px",
+    padding: "10px",
     boxSizing: "border-box",
+    backgroundColor: "#E8E8E8",
+    border: "1px solid #ccc",
+    borderRadius: "10px",
   },
   button: {
     padding: "10px 15px",
@@ -95,6 +102,18 @@ const styles = {
   },
   error: {
     color: "red",
+  },
+  heading: {
+    color: "#000000",
+    fontWeight: "bold",
+    fontSize: "3em",
+    marginBottom: "10px", 
+  },
+  line: {
+    width: "100%", 
+    height: "2px", 
+    backgroundColor: "#000000", 
+    marginBottom: "40px", 
   },
 };
 
