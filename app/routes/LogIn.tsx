@@ -41,7 +41,7 @@ function LogIn() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+                className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
             </div>
@@ -54,7 +54,7 @@ function LogIn() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+                className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
             </div>

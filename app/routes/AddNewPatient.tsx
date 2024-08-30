@@ -75,7 +75,7 @@ function AddNewPatient() {
               name="patientId"
               value={formData.patientId}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -90,7 +90,7 @@ function AddNewPatient() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -105,7 +105,7 @@ function AddNewPatient() {
               name="tel"
               value={formData.tel}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -120,7 +120,7 @@ function AddNewPatient() {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -134,7 +134,7 @@ function AddNewPatient() {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Gender</option>
@@ -153,7 +153,7 @@ function AddNewPatient() {
               name="appointmentDate"
               value={formData.appointmentDate}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -168,7 +168,7 @@ function AddNewPatient() {
               name="course"
               value={formData.course}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>

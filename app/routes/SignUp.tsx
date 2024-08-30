@@ -75,7 +75,7 @@ function SignUp() {
 
   return (
     <div className="flex justify-center items-start min-height: 0vh; pt-12 pb-12 bg-[#DCE8E9]">
-      <div className="p-6 border border-gray-300 rounded-lg bg-white shadow-lg max-w-lg w-full relative">
+      <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg max-w-lg w-full relative">
         <h1 className="text-[#1FA1AF] font-bold text-xl mb-6">Sign up new staff</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -88,7 +88,7 @@ function SignUp() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -103,7 +103,7 @@ function SignUp() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -118,7 +118,7 @@ function SignUp() {
               name="tel"
               value={formData.tel}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -133,7 +133,7 @@ function SignUp() {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -147,7 +147,7 @@ function SignUp() {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Gender</option>
@@ -166,7 +166,7 @@ function SignUp() {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Role</option>
@@ -185,7 +185,7 @@ function SignUp() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -200,7 +200,7 @@ function SignUp() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -215,7 +215,7 @@ function SignUp() {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-lg"
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
@@ -226,7 +226,7 @@ function SignUp() {
         <button
           type="button"
           onClick={handleSubmit}
-          className="absolute right-[-200px] top-[-50] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
+          className="absolute right-[-200px] top-[-50] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-3xl"
         >
           Save
         </button>
