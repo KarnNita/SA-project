@@ -252,7 +252,7 @@ const styles = {
 
   saveButton: {
     padding: "10px 20px",
-    backgroundColor: "#2F919C",
+    backgroundColor: "#1FA1AF",
     color: "#fff",
     border: "none",
     borderRadius: "10px",
@@ -267,7 +267,7 @@ const styles = {
     color: "red",
   },
   heading: {
-    color: "#2F919C",
+    color: "#1FA1AF",
     fontWeight: "bold",
     fontSize: "1.5em",
     marginBottom: "20px", 
