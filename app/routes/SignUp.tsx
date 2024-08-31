@@ -74,70 +74,80 @@ function SignUp() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.formWrapper}>
-      <h1 style={styles.heading}>Sign up new staff</h1>
-      <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label htmlFor="username">Username:</label>
+    <div className="flex justify-center items-start min-height: 0vh; pt-12 pb-12 bg-[#DCE8E9]">
+      <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg max-w-lg w-full relative">
+        <h1 className="text-[#1FA1AF] font-bold text-xl mb-6">Sign up new staff</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block mb-1">
+              Username:
+            </label>
             <input
               type="text"
               id="username"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="name">Name:</label>
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-1">
+              Name:
+            </label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="tel">Telephone:</label>
+          <div className="mb-4">
+            <label htmlFor="tel" className="block mb-1">
+              Telephone:
+            </label>
             <input
               type="tel"
               id="tel"
               name="tel"
               value={formData.tel}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="age">Age:</label>
+          <div className="mb-4">
+            <label htmlFor="age" className="block mb-1">
+              Age:
+            </label>
             <input
               type="number"
               id="age"
               name="age"
               value={formData.age}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="gender">Gender:</label>
+          <div className="mb-4">
+            <label htmlFor="gender" className="block mb-1">
+              Gender:
+            </label>
             <select
               id="gender"
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Gender</option>
@@ -147,14 +157,16 @@ function SignUp() {
             </select>
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="role">Role:</label>
+          <div className="mb-4">
+            <label htmlFor="role" className="block mb-1">
+              Role:
+            </label>
             <select
               id="role"
               name="role"
               value={formData.role}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Role</option>
@@ -163,116 +175,65 @@ function SignUp() {
             </select>
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="email">Email:</label>
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-1">
+              Email:
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="password">Password:</label>
+          <div className="mb-4">
+            <label htmlFor="password" className="block mb-1">
+              Password:
+            </label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirm Password:</label>
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block mb-1">
+              Confirm Password:
+            </label>
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
-
+          {error && <p className="text-red-500">{error}</p>}
         </form>
-      </div>
 
-      {/* Save button positioned to the right of the form box */}
-      <button type="button" onClick={handleSubmit} style={styles.saveButton}>
-        Save
-      </button>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="absolute right-[-200px] top-[-50] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-3xl"
+        >
+          Save
+        </button>
+
+      </div>
     </div>
   );
 }
-
-// Styles
-const styles = {
-  container: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "flex-start",
-    height: "80vh",
-    paddingTop: "50px",
-    paddingBottom: "820px",
-    backgroundColor: "#f5f5f5",
-  },
-  formWrapper: {
-    padding: "20px",
-    paddingBottom: "20px",
-    border: "1px solid #ccc",
-    borderRadius: "10px",
-    backgroundColor: "#fff",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-    maxWidth: "600px",
-    width: "100%",
-    position: "relative",
-  },
-  formGroup: {
-    marginBottom: "15px", 
-  },
-  input: {
-    width: "100%",
-    paddingTop: "8px",
-    padding: "8px", 
-    boxSizing: "border-box",
-    backgroundColor: "#D6D6D6",
-    fontSize: "0.8em", 
-    borderRadius: "10px",
-  },
-
-  saveButton: {
-    padding: "10px 20px",
-    backgroundColor: "#1FA1AF",
-    color: "#fff",
-    border: "none",
-    borderRadius: "10px",
-    cursor: "pointer",
-    position: "absolute",
-    right: "130px",
-    top: "105%",
-    transform: "translateY(-50%)",
-    width: "150px",
-  },
-  error: {
-    color: "red",
-  },
-  heading: {
-    color: "#1FA1AF",
-    fontWeight: "bold",
-    fontSize: "1.5em",
-    marginBottom: "20px", 
-  },
-
-};
 
 export default SignUp;
