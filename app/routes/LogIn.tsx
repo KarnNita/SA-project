@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
+// Type for the event object
+type FormEvent = React.FormEvent<HTMLFormElement>;
+
 function LogIn() {
   // State to store form inputs
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
 
     // Basic validation
@@ -17,7 +20,7 @@ function LogIn() {
     }
 
     // Here you can add the logic to authenticate the user
-    console.log("Username:", email);
+    console.log("Email:", email);
     console.log("Password:", password);
 
     // Clear the form
@@ -32,7 +35,7 @@ function LogIn() {
         <h2>Log In</h2>
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: "15px" }}>
-            <label htmlFor="Username" style={{ display: "block", marginBottom: "5px" }}>Email:</label>
+            <label htmlFor="email" style={{ display: "block", marginBottom: "5px" }}>Email:</label>
             <input
               type="email"
               id="email"
@@ -64,7 +67,7 @@ function LogIn() {
 }
 
 // Styles
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
   container: {
     display: "flex",
     justifyContent: "center",

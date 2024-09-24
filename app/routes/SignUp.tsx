@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 
+// Type for the event objects
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
+type FormEvent = React.FormEvent<HTMLFormElement>;
+type MouseEvent = React.MouseEvent<HTMLButtonElement>;
+
 function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
@@ -14,7 +19,8 @@ function SignUp() {
   });
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  // Handle change in form inputs
+  const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -22,9 +28,8 @@ function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  // Handle form submission
+  const handleSubmit = () => {
     const {
       username,
       name,
@@ -73,11 +78,17 @@ function SignUp() {
     setError("");
   };
 
+  // Handle button click
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   return (
     <div style={styles.container}>
       <div style={styles.formWrapper}>
-      <h1 style={styles.heading}>Sign up new staff</h1>
-      <form onSubmit={handleSubmit}>
+        <h1 style={styles.heading}>Sign up new staff</h1>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div style={styles.formGroup}>
             <label htmlFor="username">Username:</label>
             <input
@@ -203,12 +214,11 @@ function SignUp() {
           </div>
 
           {error && <p style={styles.error}>{error}</p>}
-
         </form>
       </div>
 
       {/* Save button positioned to the right of the form box */}
-      <button type="button" onClick={handleSubmit} style={styles.saveButton}>
+      <button type="button" onClick={handleClick} style={styles.saveButton}>
         Save
       </button>
     </div>
@@ -216,14 +226,14 @@ function SignUp() {
 }
 
 // Styles
-const styles = {
+const styles: Record<string, React.CSSProperties> = {
   container: {
     display: "flex",
     justifyContent: "center",
     alignItems: "flex-start",
     height: "80vh",
     paddingTop: "50px",
-    paddingBottom: "820px",
+    paddingBottom: "50px", // Adjusted padding to avoid large gap
     backgroundColor: "#f5f5f5",
   },
   formWrapper: {
@@ -238,18 +248,16 @@ const styles = {
     position: "relative",
   },
   formGroup: {
-    marginBottom: "15px", 
+    marginBottom: "15px",
   },
   input: {
     width: "100%",
-    paddingTop: "8px",
-    padding: "8px", 
+    padding: "8px",
     boxSizing: "border-box",
     backgroundColor: "#D6D6D6",
-    fontSize: "0.8em", 
+    fontSize: "0.8em",
     borderRadius: "10px",
   },
-
   saveButton: {
     padding: "10px 20px",
     backgroundColor: "#2F919C",
@@ -270,9 +278,8 @@ const styles = {
     color: "#2F919C",
     fontWeight: "bold",
     fontSize: "1.5em",
-    marginBottom: "20px", 
+    marginBottom: "20px",
   },
-
 };
 
 export default SignUp;
