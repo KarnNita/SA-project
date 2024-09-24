@@ -10,7 +10,7 @@ function SignUp() {
     username: "",
     name: "",
     tel: "",
-    age: "",
+    birthday: "",
     gender: "",
     role: "",
     email: "",
@@ -34,7 +34,7 @@ function SignUp() {
       username,
       name,
       tel,
-      age,
+      birthday,
       gender,
       role,
       email,
@@ -46,7 +46,7 @@ function SignUp() {
       !username ||
       !name ||
       !tel ||
-      !age ||
+      !birthday ||
       !gender ||
       !role ||
       !email ||
@@ -68,7 +68,7 @@ function SignUp() {
       username: "",
       name: "",
       tel: "",
-      age: "",
+      birthday: "",
       gender: "",
       role: "",
       email: "",
@@ -78,6 +78,7 @@ function SignUp() {
     setError("");
   };
 
+<<<<<<< HEAD
   // Handle button click
   const handleClick = (e: MouseEvent) => {
     e.preventDefault();
@@ -91,64 +92,88 @@ function SignUp() {
         <form onSubmit={(e) => e.preventDefault()}>
           <div style={styles.formGroup}>
             <label htmlFor="username">Username:</label>
+=======
+  const formatBirthday = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  return (
+    <div className="flex justify-center items-start min-height: 0vh; pt-12 pb-12 bg-[#DCE8E9]">
+      <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg max-w-lg w-full relative">
+        <h1 className="text-[#1FA1AF] font-bold text-xl mb-6">Sign up new staff</h1>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="username" className="block mb-1">
+              Username:
+            </label>
+>>>>>>> a589aa51073d262d5d3220c98a8a888741e95825
             <input
               type="text"
               id="username"
               name="username"
               value={formData.username}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="name">Name:</label>
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-1">
+              Name:
+            </label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="tel">Telephone:</label>
+          <div className="mb-4">
+            <label htmlFor="tel" className="block mb-1">
+              Telephone:
+            </label>
             <input
               type="tel"
               id="tel"
               name="tel"
               value={formData.tel}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="age">Age:</label>
+          <div className="mb-4">
+            <label htmlFor="birthday" className="block mb-1">
+              Birthday:
+            </label>
             <input
-              type="number"
-              id="age"
-              name="age"
-              value={formData.age}
+              type="date"
+              id="birthday"
+              name="birthday"
+              value={formData.birthday}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="gender">Gender:</label>
+          <div className="mb-4">
+            <label htmlFor="gender" className="block mb-1">
+              Gender:
+            </label>
             <select
               id="gender"
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Gender</option>
@@ -158,14 +183,16 @@ function SignUp() {
             </select>
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="role">Role:</label>
+          <div className="mb-4">
+            <label htmlFor="role" className="block mb-1">
+              Role:
+            </label>
             <select
               id="role"
               name="role"
               value={formData.role}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             >
               <option value="">Select Role</option>
@@ -174,57 +201,79 @@ function SignUp() {
             </select>
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="email">Email:</label>
+          <div className="mb-4">
+            <label htmlFor="email" className="block mb-1">
+              Email:
+            </label>
             <input
               type="email"
               id="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="password">Password:</label>
+          <div className="mb-4">
+            <label htmlFor="password" className="block mb-1">
+              Password:
+            </label>
             <input
               type="password"
               id="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label htmlFor="confirmPassword">Confirm Password:</label>
+          <div className="mb-4">
+            <label htmlFor="confirmPassword" className="block mb-1">
+              Confirm Password:
+            </label>
             <input
               type="password"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              style={styles.input}
+              className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
             />
           </div>
 
+<<<<<<< HEAD
           {error && <p style={styles.error}>{error}</p>}
+=======
+          {error && <p className="text-red-500">{error}</p>}
+>>>>>>> a589aa51073d262d5d3220c98a8a888741e95825
         </form>
-      </div>
 
+<<<<<<< HEAD
       {/* Save button positioned to the right of the form box */}
       <button type="button" onClick={handleClick} style={styles.saveButton}>
         Save
       </button>
+=======
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="absolute right-[-200px] top-[-50] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-3xl"
+        >
+          Save
+        </button>
+
+      </div>
+>>>>>>> a589aa51073d262d5d3220c98a8a888741e95825
     </div>
   );
 }
 
+<<<<<<< HEAD
 // Styles
 const styles: Record<string, React.CSSProperties> = {
   container: {
@@ -282,4 +331,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
+=======
+>>>>>>> a589aa51073d262d5d3220c98a8a888741e95825
 export default SignUp;
