@@ -5,7 +5,7 @@ function SignUp() {
     username: "",
     name: "",
     tel: "",
-    age: "",
+    birthday: "",
     gender: "",
     role: "",
     email: "",
@@ -29,7 +29,7 @@ function SignUp() {
       username,
       name,
       tel,
-      age,
+      birthday,
       gender,
       role,
       email,
@@ -41,7 +41,7 @@ function SignUp() {
       !username ||
       !name ||
       !tel ||
-      !age ||
+      !birthday ||
       !gender ||
       !role ||
       !email ||
@@ -63,7 +63,7 @@ function SignUp() {
       username: "",
       name: "",
       tel: "",
-      age: "",
+      birthday: "",
       gender: "",
       role: "",
       email: "",
@@ -71,6 +71,11 @@ function SignUp() {
       confirmPassword: "",
     });
     setError("");
+  };
+
+  const formatBirthday = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -124,14 +129,14 @@ function SignUp() {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="age" className="block mb-1">
-              Age:
+            <label htmlFor="birthday" className="block mb-1">
+              Birthday:
             </label>
             <input
-              type="number"
-              id="age"
-              name="age"
-              value={formData.age}
+              type="date"
+              id="birthday"
+              name="birthday"
+              value={formData.birthday}
               onChange={handleChange}
               className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
               required
