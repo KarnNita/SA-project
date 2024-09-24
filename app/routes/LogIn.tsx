@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 
+// Type for the event object
+type FormEvent = React.FormEvent<HTMLFormElement>;
+
 function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

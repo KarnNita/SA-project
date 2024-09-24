@@ -1,5 +1,10 @@
 import React, { useState } from "react";
 
+// Type for the event objects
+type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
+type FormEvent = React.FormEvent<HTMLFormElement>;
+type MouseEvent = React.MouseEvent<HTMLButtonElement>;
+
 function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
@@ -14,7 +19,8 @@ function SignUp() {
   });
   const [error, setError] = useState("");
 
-  const handleChange = (e) => {
+  // Handle change in form inputs
+  const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -22,9 +28,8 @@ function SignUp() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
+  // Handle form submission
+  const handleSubmit = () => {
     const {
       username,
       name,

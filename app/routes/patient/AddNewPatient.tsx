@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 
 function AddNewPatient() {
   const [formData, setFormData] = useState({
@@ -10,9 +10,9 @@ function AddNewPatient() {
     appointmentDate: "",
     course: "",
   });
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -20,7 +20,7 @@ function AddNewPatient() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const {
@@ -58,6 +58,15 @@ function AddNewPatient() {
       course: "",
     });
     setError("");
+  };
+
+  // Wrapper function to call handleSubmit
+  const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    handleSubmit({
+      preventDefault: () => {}, // Dummy function to satisfy TypeScript
+      // The rest of FormEvent properties are not necessary here
+    } as FormEvent<HTMLFormElement>);
   };
 
   return (
