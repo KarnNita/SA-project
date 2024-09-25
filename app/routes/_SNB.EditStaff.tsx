@@ -34,7 +34,7 @@ function EditStaff({ initialData }) {
   };
 
   return (
-    <div className="flex flex-col justify-between min-h-screen bg-[#DCE8E9]">
+    <div className="flex flex-col justify-between min-h-screen w-svw bg-[#DCE8E9]">
       <div className="flex justify-center items-start pt-12 pb-12">
         <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg max-w-lg w-full relative">
         <div className="flex justify-between items-center mb-6">
