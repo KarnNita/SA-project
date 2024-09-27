@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons'; // Import icon
 
 interface Staff {
   username: string;
   name: string;
   tel: string;
-  birthDay: string;  // เปลี่ยนจาก age เป็น birthDay
+  birthDay: string;
   gender: string;
   role: string;
   email: string;
@@ -34,7 +36,6 @@ class StaffListView extends Component<{}, State> {
   };
 
   handleEditStaff = (username: string) => {
-    // Implement the edit staff logic here
     console.log(`Edit staff with username: ${username}`);
   };
 
@@ -49,7 +50,7 @@ class StaffListView extends Component<{}, State> {
       <div
         className="page-background"
         style={{
-          backgroundColor: '#DCE8E9',  // สีพื้นหลังของหน้าเว็บทั้งหมด
+          backgroundColor: '#DCE8E9',
           width: '100%',
           minHeight: '100vh',
           padding: '50px',
@@ -62,8 +63,8 @@ class StaffListView extends Component<{}, State> {
             width: '1116px',
             height: '968px',
             padding: '20px',
-            backgroundColor: '#ffffff',  // สีพื้นหลังของ card
-            borderRadius: '10px',
+            backgroundColor: '#ffffff',
+            borderRadius: '50px 5px 5px 50px',
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
             margin: 'auto',
           }}
@@ -78,15 +79,28 @@ class StaffListView extends Component<{}, State> {
             }}
           >
             <h2 style={{ fontSize: '28px', color: '#2F919C' }}>Staff List View</h2>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                cursor: 'pointer',
+              }}
+              onClick={() => console.log('Add new Staff clicked')}
+            >
+              {/* Add new Staff button with icon */}
+              <div
                 style={{
-                  ...buttonStyle,
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '10px',
+                  borderRadius: '50%',
                   backgroundColor: '#f0c040',
                 }}
               >
-                Add new Staff
-              </button>
+                <FontAwesomeIcon icon={faUserPlus} style={{ color: '#000' }} />
+              </div>
+              <span style={{ color: '#000000', fontSize: '16px' }}>Add new Staff</span>
             </div>
           </div>
 
@@ -116,7 +130,7 @@ class StaffListView extends Component<{}, State> {
           <div
             className="staff-list"
             style={{
-              backgroundColor: '#DCE8E9',  // พื้นหลังของ list view
+              backgroundColor: '#DCE8E9',
               borderRadius: '10px',
               padding: '20px',
               height: '100%',
@@ -128,11 +142,11 @@ class StaffListView extends Component<{}, State> {
                   <th style={thTdStyle}>Username</th>
                   <th style={thTdStyle}>Name</th>
                   <th style={thTdStyle}>Tel</th>
-                  <th style={thTdStyle}>Birth Day</th>  {/* เปลี่ยนจาก Age เป็น Birth Day */}
+                  <th style={thTdStyle}>Birth Day</th>
                   <th style={thTdStyle}>Gender</th>
                   <th style={thTdStyle}>Role</th>
                   <th style={thTdStyle}>Email</th>
-                  <th style={thTdStyle}></th> {/* สำหรับปุ่ม Edit Staff */}
+                  <th style={thTdStyle}></th>
                 </tr>
               </thead>
               <tbody>
@@ -141,7 +155,7 @@ class StaffListView extends Component<{}, State> {
                     <td style={thTdStyle}>{staff.username}</td>
                     <td style={thTdStyle}>{staff.name}</td>
                     <td style={thTdStyle}>{staff.tel}</td>
-                    <td style={thTdStyle}>{staff.birthDay}</td>  {/* แสดง birthDay แทน age */}
+                    <td style={thTdStyle}>{staff.birthDay}</td>
                     <td style={thTdStyle}>{staff.gender}</td>
                     <td style={thTdStyle}>{staff.role}</td>
                     <td style={thTdStyle}>{staff.email}</td>
@@ -164,16 +178,6 @@ class StaffListView extends Component<{}, State> {
     );
   }
 }
-
-const buttonStyle: React.CSSProperties = {
-  backgroundColor: '#f0c040',
-  border: 'none',
-  padding: '10px 20px',
-  borderRadius: '20px',
-  cursor: 'pointer',
-  fontWeight: 'bold',
-  transition: 'background-color 0.3s ease',
-};
 
 const thTdStyle: React.CSSProperties = {
   padding: '12px',

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons'; // Import icons
 
 interface Patient {
   patientId: string;
@@ -34,13 +36,12 @@ class ListViewPatient extends Component<{}, State> {
   };
 
   handleEditPatient = (patientId: string) => {
-    console.log(`Edit patient with ID: ${patientId}`);
+    alert(`Edit Patient function called for Patient ID: ${patientId}`);
   };
 
   render() {
     const { patientList, searchTerm } = this.state;
-
-    const filteredPatients = patientList.filter(patient =>
+    const filteredPatients = patientList.filter((patient) =>
       patient.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -58,11 +59,11 @@ class ListViewPatient extends Component<{}, State> {
         <div
           className="patient-list-view-container"
           style={{
-            width: '1116px',
-            height: '968px',
-            padding: '20px',
+            width: '1120px', // Increased width for larger card
+            height: '850px',  // Increased height for larger card
+            padding: '30px',
             backgroundColor: '#ffffff',
-            borderRadius: '10px',
+            borderRadius: '50px 5px 5px 50px', // Adjusted rounded corners
             boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
             margin: 'auto',
           }}
@@ -77,15 +78,31 @@ class ListViewPatient extends Component<{}, State> {
             }}
           >
             <h2 style={{ fontSize: '28px', color: '#2F919C' }}>List View Patient</h2>
-            <div>
-              <button
+            {/* Add new Patient button with icon */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                cursor: 'pointer',
+              }}
+              onClick={() => console.log('Add new Patient clicked')}
+            >
+              <span
                 style={{
-                  ...buttonStyle,
+                  padding: '8px',
                   backgroundColor: '#f0c040',
+                  borderRadius: '12px', // Rounded corners for the yellow background
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '10px',
                 }}
               >
+                <FontAwesomeIcon icon={faUserPlus} style={{ color: '#000000' }} />
+              </span>
+              <span style={{ color: '#000000', textDecoration: 'underline', cursor: 'pointer' }}>
                 Add new Patient
-              </button>
+              </span>
             </div>
           </div>
 
@@ -142,11 +159,15 @@ class ListViewPatient extends Component<{}, State> {
                       <a
                         href="#"
                         onClick={() => this.handleEditPatient(patient.patientId)}
-                        style={{ color: '#2F919C', cursor: 'pointer', textDecoration: 'underline' }}
+                        style={{
+                          color: '#2F919C',
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
+                        }}
                       >
                         {patient.name}
                       </a>
-                    </td> {/* ทำให้ชื่อสามารถกดได้ */}
+                    </td>
                     <td style={thTdStyle}>{patient.tel}</td>
                     <td style={thTdStyle}>{patient.birthDay}</td>
                     <td style={thTdStyle}>{patient.gender}</td>

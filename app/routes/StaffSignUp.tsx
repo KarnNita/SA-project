@@ -78,7 +78,7 @@ function SignUp() {
     setError("");
   };
 
-  const formatBirthday = (date) => {
+  const formatBirthday = (date: string) => { // กำหนดประเภทของ date เป็น string
     const [year, month, day] = date.split("-");
     return `${day}/${month}/${year}`;
   };
