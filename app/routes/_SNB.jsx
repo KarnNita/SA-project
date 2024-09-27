@@ -20,7 +20,7 @@ function SideNavBar() {
           <li className="flex flex-col items-center pt-9">
             <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
               <IoMdHome size={26} className="mb-2" />
-              <a href="#Home" className="text-lg block">
+              <a href="/Home" className="text-lg block">
                 Home Menu
               </a>
             </div>
@@ -28,7 +28,7 @@ function SideNavBar() {
           <li className="flex flex-col items-center">
             <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
               <FaUser size={20} className="mb-2" />
-              <a href="#StaffList" className="text-lg block">
+              <a href="/StaffListView" className="text-lg block">
                 Staff List
               </a>
             </div>
@@ -36,7 +36,7 @@ function SideNavBar() {
           <li className="flex flex-col items-center">
             <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
               <IoPersonAddSharp size={20} className="mb-2" />
-              <a href="#AddNewPatient" className="text-lg block">
+              <a href="/AddNewPatient" className="text-lg block">
                 Add New Patient
               </a>
             </div>
