@@ -6,7 +6,7 @@ function AddNewPatient() {
     patientId: "",
     name: "",
     tel: "",
-    age: "",
+    birthday: "",
     gender: "",
     appointmentDate: "",
     course: "",
@@ -30,13 +30,13 @@ function AddNewPatient() {
       patientId,
       name,
       tel,
-      age,
+      birthday,
       gender,
       appointmentDate,
       course,
     } = formData;
 
-    if (!patientId || !name || !tel || !age || !gender || !appointmentDate || !course) {
+    if (!patientId || !name || !tel || !birthday || !gender || !appointmentDate || !course) {
       setError("Please fill in all fields.");
       return;
     }
@@ -47,7 +47,7 @@ function AddNewPatient() {
       patientId: "",
       name: "",
       tel: "",
-      age: "",
+      birthday: "",
       gender: "",
       appointmentDate: "",
       course: "",
@@ -116,12 +116,12 @@ function AddNewPatient() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="age" className="block mb-1">Age:</label>
+              <label htmlFor="birthday" className="block mb-1">Birthday:</label>
               <input
-                type="number"
-                id="age"
-                name="age"
-                value={formData.age}
+                type="date"
+                id="birthday"
+                name="birthday"
+                value={formData.birthday}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
@@ -171,7 +171,7 @@ function AddNewPatient() {
             </div>
 
             <button
-              onClick={handleButtonClick}
+              onClick = {handleButtonClick}
               className="absolute right-28 top-[98%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
             >
               Save
