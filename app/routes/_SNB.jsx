@@ -40,14 +40,39 @@ function SideNavBar() {
                 Add New Patient
               </a>
             </div>
-          </li><li className="flex flex-col items-center">
+          </li>
+
+          {/*Great*/}
+          <li className="flex flex-col items-center">
             <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
-              <RiExchange2Fill size={24} className="mb-2" />
-              <a href="#IncomeExpenses" className="text-lg block">
+              <a href="/PatientDetail" className="text-lg block">
+               Patient Detail
+              </a> 
+            </div> 
+          </li>
+          <li className="flex flex-col items-center">
+            <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
+              <a href="/IncomeExpenses" className="text-lg block">
                 Income Expenses
               </a>
             </div>
           </li>
+          <li className="flex flex-col items-center">
+            <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
+              <a href="/EquipmentHistory" className="text-lg block">
+              Equipment History
+              </a>
+            </div>
+          </li>
+          <li className="flex flex-col items-center">
+            <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
+              <a href="/EditPatient" className="text-lg block">
+               Edit Patient
+              </a>
+            </div>
+          </li>
+
+
           <li className="flex flex-col items-center">
             <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
               <FaWrench size={20} className="mb-2" />
