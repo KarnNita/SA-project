@@ -3,45 +3,49 @@ import needleImage from '/images/needle.png';
 import cottonImage from '/images/cotton.png';
 import alcoholBottleImage from '/images/alcohol_bottle.png';
 import { Link } from '@remix-run/react';
+import SideNavBar from 'app/routes/_SNB';
 
 export default function Equipment() {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <div style={styles.header}>
-          <h2 style={styles.title}>Equipment</h2>
-          <div style={styles.buttons}>
-            <button style={styles.historyButton}>
-              <div style={styles.icon}></div>Equipment history
-            </button>
-            <Link to="/EditEquipment">
-              <button style={styles.editButton}>
-                <div style={styles.icon}></div>Edit Equipment
+    <div className="flex">
+      <SideNavBar />
+      <div style={styles.container}>
+        <div style={styles.card}>
+          <div style={styles.header}>
+            <h2 style={styles.title}>Equipment</h2>
+            <div style={styles.buttons}>
+              <button style={styles.historyButton}>
+                <div style={styles.icon}></div>Equipment history
               </button>
-            </Link>
-          </div>
-        </div>
-        <div style={styles.equipmentCard}>
-          {equipmentItems.map((item) => (
-            <div key={item.name} style={styles.equipmentItem}>
-              <div style={styles.imageContainer}>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={styles.itemImage}
-                />
-              </div>
-              <div style={styles.details}>
-                <h3 style={styles.itemName}>{item.name}</h3>
-                <div style={styles.remainingWrapper}>
-                  <p style={styles.remainingText}>Remaining: {item.remaining}</p>
-                </div>
-              </div>
               <Link to="/EditEquipment">
-                <button style={styles.addButton}>+</button>
+                <button style={styles.editButton}>
+                  <div style={styles.icon}></div>Edit Equipment
+                </button>
               </Link>
             </div>
-          ))}
+          </div>
+          <div style={styles.equipmentCard}>
+            {equipmentItems.map((item) => (
+              <div key={item.name} style={styles.equipmentItem}>
+                <div style={styles.imageContainer}>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    style={styles.itemImage}
+                  />
+                </div>
+                <div style={styles.details}>
+                  <h3 style={styles.itemName}>{item.name}</h3>
+                  <div style={styles.remainingWrapper}>
+                    <p style={styles.remainingText}>Remaining: {item.remaining}</p>
+                  </div>
+                </div>
+                <Link to="/EditEquipment">
+                  <button style={styles.addButton}>+</button>
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -68,16 +72,16 @@ const equipmentItems = [
 
 const styles = {
   container: {
-    width: '1440px',
-    height: '1024px',
+    width: '100%', // เปลี่ยนเป็น 100% เพื่อให้เต็มหน้าจอ
     backgroundColor: '#F2F8F7',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'column' as const,
   } as React.CSSProperties,
   card: {
     width: '1061px',
-    height: '994px',
+    height: 'auto', // เปลี่ยนเป็น auto เพื่อให้ยืดหยุ่นตามเนื้อหา
     backgroundColor: '#FFFFFF',
     borderRadius: '15px',
     boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
@@ -142,7 +146,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#DCE8E9',
-    borderRadius: '40px', // เพิ่มความโค้งมล
+    borderRadius: '40px',
     padding: '20px',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
     width: '100%',
@@ -152,7 +156,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: '40px', // เพิ่มความโค้งมล
+    borderRadius: '40px',
     width: '148px',
     height: '120px',
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
@@ -203,4 +207,3 @@ const styles = {
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
   } as React.CSSProperties,
 };
-
