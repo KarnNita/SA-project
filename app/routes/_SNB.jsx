@@ -44,11 +44,12 @@ function SideNavBar() {
               </div>
             </li>
             <li className="flex flex-col items-center">
-              <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
+              <div 
+                className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition cursor-pointer" 
+                onClick={() => navigate("/IncomeExpenses")}
+              >
                 <RiExchange2Fill size={24} className="mb-2" />
-                <button onClick={() => navigate("/IncomeExpenses")} className="text-lg block">
-                  Income Expenses
-                </button>
+                <span className="text-lg block">Income Expenses</span>
               </div>
             </li>
             <li className="flex flex-col items-center">

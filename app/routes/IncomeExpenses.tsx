@@ -1,100 +1,86 @@
-import React from 'react';
+import { useState } from "react";
+import { useNavigate } from '@remix-run/react';
+import SideNavBar from "./_SNB";
 
-const IncomeExpenses: React.FC = () => {
-  // Styles as objects
-  const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    backgroundColor: '#f0f4f7',
-    height: '100vh', // กำหนดความสูงให้เต็มหน้าจอ
-  };
+function IncomeExpenses() {
+    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState("Income");
 
-  const sidebarStyle: React.CSSProperties = {
-    width: '15%', // ความกว้างของแถบด้านข้าง
-    backgroundColor: '#2F919C', // สีพื้นหลังแถบด้านข้าง
-    color: 'white', // สีข้อความในแถบด้านข้าง
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    padding: '20px', // ระยะห่างภายในแถบด้านข้าง
-    borderTopRightRadius: '30px', // มุมด้านบนขวาโค้ง
-    borderBottomRightRadius: '30px', // มุมด้านล่างขวาโค้ง
-  };
+    const incomeData = [
+        { id: 1, source: "Salary", amount: 5000 },
+        { id: 2, source: "Investment", amount: 2000 },
+    ];
 
-  const listItemStyle: React.CSSProperties = {
-    margin: '20px 0', // ระยะห่างระหว่างรายการ
-    padding: '10px', // ระยะห่างภายในรายการ
-    borderRadius: '8px', // มุมโค้งของรายการ
-  };
+    const expensesData = [
+        { id: 1, item: "Rent", amount: 1500 },
+        { id: 2, item: "Groceries", amount: 300 },
+    ];
 
-  const activeItemStyle: React.CSSProperties = {
-    backgroundColor: 'transparent', // พื้นหลังรายการที่เลือก
-    color: 'white', // สีข้อความของรายการที่เลือก
-  };
+    return (
+        <div className="flex flex-row h-[100svh] bg-[#DCE8E9] overflow-hidden">
+            <SideNavBar />
+            <div className="flex flex-col flex-grow bg-white 
+                            mr-[40px] ml-[40px] mt-[25px] mb-[25px]
+                            rounded-[60px] border border-gray-300 h-[calc(100svh-50px)]
+                            shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
+                
+                <div className="flex justify-between items-center p-16">
+                    <h1 className="text-[#2F919C] text-2xl">Income Expenses</h1>
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            className="border-2 border-gray-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        />
+                    </div>
+                </div>
 
-  const logoutButtonStyle: React.CSSProperties = {
-    backgroundColor: 'white', // สีพื้นหลังของปุ่มออกจากระบบ
-    width: '165px', // ความกว้างของปุ่ม
-    color: '#256d7b', // สีข้อความของปุ่ม
-    border: 'none', // ไม่มีขอบ
-    padding: '10px', // ระยะห่างภายในปุ่ม
-    borderRadius: '8px', // มุมโค้งของปุ่ม
-    cursor: 'pointer', // เปลี่ยนเคอร์เซอร์เมื่อชี้ไปที่ปุ่ม
-  };
+                <div className="flex flex-row justify-center gap-[400px] text-xl ">
+                    <h2 
+                        className={`cursor-pointer ${activeTab === "Income" ? "text-black" : "text-gray-400"}`} 
+                        onClick={() => setActiveTab("Income")}
+                    >
+                        Income
+                    </h2>
+                    <h2 
+                        className={`cursor-pointer ${activeTab === "Expenses" ? "text-black" : "text-gray-400"}`} 
+                        onClick={() => setActiveTab("Expenses")}
+                    >
+                        Expenses
+                    </h2>
+                </div>
 
-  return (
-    <div style={containerStyle}>
-      {/* แถบเครื่องมือด้านซ้าย */}
-      <div style={sidebarStyle}>
-        <h3>Clinic Application</h3>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {/* รายการเมนูในแถบด้านข้าง */}
-          <li style={listItemStyle}>Home Menu</li>
-          <li style={listItemStyle}>Staff List</li>
-          <li style={listItemStyle}>Add new patient</li>
-          <li style={listItemStyle}>Equipment</li>
-        </ul>
-        {/* ปุ่มออกจากระบบ */}
-        <button style={logoutButtonStyle}>LOG OUT</button>
-      </div>
-
-      {/* เนื้อหาหลัก */}
-      <div style={{ width: '80%', padding: '40px', backgroundColor: 'white', borderRadius: '75px', margin: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <h1 style={{ fontSize: '20px', color: '#2F919C' }}>Income and Expenses</h1>
-        </div>
-
-        {/* ส่วนข้อมูลการเงิน */}
-        <div style={{ backgroundColor: '#DCE8E9', padding: '20px', borderRadius: '25px', width: '100%' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-            {/* กล่องข้อความสำหรับรายได้ */}
-            <div style={{ display: 'grid', gap: '17px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
-                <label>Income:</label>
-                <input type="text" placeholder="Enter income" style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
-              </div>
-
-              {/* กล่องข้อความสำหรับค่าใช้จ่าย */}
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
-                <label>Expenses:</label>
-                <input type="text" placeholder="Enter expenses" style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
-              </div>
+                <div className="flex flex-col flex-grow items-center justify-center bg-[#DCE8E9] 
+                                mx-auto mt-[25px] mb-[25px] w-[118svh]
+                                rounded-[60px] border border-gray-300 h-[calc(100svh-50px)]">
+                    
+                    {activeTab === "Income" && (
+                        <div>
+                            <ul className="text-xl">
+                                {incomeData.map((income) => (
+                                    <li key={income.id} className="mb-2">
+                                        Source: {income.source}, Amount: ${income.amount}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    {activeTab === "Expenses" && (
+                        <div>
+                            <ul className="text-xl">
+                                {expensesData.map((expense) => (
+                                    <li key={expense.id} className="mb-2">
+                                        Item: {expense.item}, Amount: ${expense.amount}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
-          </div>
+            
         </div>
-
-        {/* ตารางแสดงข้อมูลการเงิน */}
-        <div style={{ color: '#BCBCBC', backgroundColor: '#DCE8E9', padding: '120px', borderRadius: '25px', marginTop: '20px', width: '100%', textAlign: 'center' }}>
-          <h1>Financial Summary</h1>
-        </div>
-
-        {/* ปุ่มบันทึกข้อมูล */}
-        <button style={{
-          backgroundColor: '#2F919C', color: 'white', border: 'none',
-          padding: '10px 20px', cursor: 'pointer', marginTop: '20px', borderRadius: '5px', marginLeft: 'auto'
-        }}>Save</button>
-      </div>
-    </div>
-  );
-};
+    );
+}
 
 export default IncomeExpenses;
