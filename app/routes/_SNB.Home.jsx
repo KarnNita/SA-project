@@ -68,9 +68,6 @@ function Home() {
                     <div className="bg-[#94dfd9] w-[13svw] h-3 ml-8 rounded-3xl" style={{ filter: "drop-shadow(0 0.25rem 0.125rem #C3C3C3)" }}/>
                     <PatientRow/><PatientRow/><PatientRow/><PatientRow/>
                 </div>
-
-                <div className="flex flex-row bg-[#1FA1AF] w-[17svw] h-[20svh] rounded-3xl mt-5">
-                </div>
             </div>
         </div>
     );
