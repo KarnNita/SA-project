@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useNavigate } from "@remix-run/react";
 
-// Type for the event object
-type FormEvent = React.FormEvent<HTMLFormElement>;
 
 function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const navigate = useNavigate(); 
+
+  const handleSubmit = (e:any ) => {
+    e.preventDefault();
 
     if (!username || !password) {
       setError("Please fill in all fields.");
@@ -23,6 +24,8 @@ function LogIn() {
     setUsername("");
     setPassword("");
     setError("");
+
+    navigate('/home')
   };
 
   return (
@@ -34,7 +37,7 @@ function LogIn() {
             <div className="w-full h-0.5 bg-black mb-2"></div>
             <h3>Something for decoration</h3>
           </div>
-          <form onSubmit={handleSubmit}>
+          <div>
             <div className="mb-4">
               <label htmlFor="username" className="block mb-1">
                 Username
@@ -57,18 +60,19 @@ function LogIn() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onClick={()=>console.log('fs')}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
             </div>
             {error && <p className="text-red-500">{error}</p>}
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="mt-10 py-2 px-3 bg-gradient-to-r from-[#2CD8] to-[#C5C1FF] text-white font-bold rounded-lg w-[70%] mx-auto block"
             >
               LOGIN
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
