@@ -3,7 +3,6 @@ import { useNavigate } from "@remix-run/react";
 
 function AddNewPatient() {
   const [formData, setFormData] = useState({
-    patientId: "",
     name: "",
     tel: "",
     birthday: "",
@@ -12,8 +11,7 @@ function AddNewPatient() {
     course: "",
   });
   const [error, setError] = useState<string>("");
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -23,28 +21,52 @@ function AddNewPatient() {
     }));
   };
 
+  const validateForm = () => {
+    const { tel, birthday, course } = formData;
+
+    const telRegex = /^\d{10}$/;
+    if (!telRegex.test(tel)) {
+      setError("Telephone number must be 10 digits.");
+      return false;
+    }
+
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    if (birthDate > today) {
+      setError("Birthday cannot be in the future.");
+      return false;
+    }
+
+    if (parseInt(course) < 0) {
+      setError("Course count cannot be negative.");
+      return false;
+    }
+
+    if (isNaN(parseInt(course))) {
+      setError("Course count must be a valid number.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const {
-      patientId,
-      name,
-      tel,
-      birthday,
-      gender,
-      appointmentDate,
-      course,
-    } = formData;
+    const {name, tel, birthday, gender, appointmentDate, course } = formData;
 
-    if (!patientId || !name || !tel || !birthday || !gender || !appointmentDate || !course) {
+    if (!name || !tel || !birthday || !gender || !appointmentDate || !course) {
       setError("Please fill in all fields.");
+      return;
+    }
+
+    if (!validateForm()) {
       return;
     }
 
     console.log("Form Data:", formData);
 
     setFormData({
-      patientId: "",
       name: "",
       tel: "",
       birthday: "",
@@ -53,14 +75,13 @@ function AddNewPatient() {
       course: "",
     });
     setError("");
-    navigate('/PatientDetail')
+    navigate('/PatientDetail');
   };
 
-  // Wrapper function to call handleSubmit
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     handleSubmit({
-      preventDefault: () => {}, // Dummy function to satisfy TypeScript
+      preventDefault: () => {}, 
     } as FormEvent<HTMLFormElement>);
   };
 
@@ -71,23 +92,10 @@ function AddNewPatient() {
 
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Add New Patient</h1>
-            <div className="flex flex-row items-center">
-            </div>
+            <div className="flex flex-row items-center"></div>
           </div>
 
           <form>
-            <div className="mb-4">
-              <label htmlFor="patientId" className="block mb-1">Patient ID:</label>
-              <input
-                type="text"
-                id="patientId"
-                name="patientId"
-                value={formData.patientId}
-                onChange={handleChange}
-                className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
-                required
-              />
-            </div>
 
             <div className="mb-4">
               <label htmlFor="name" className="block mb-1">Name:</label>
@@ -160,7 +168,7 @@ function AddNewPatient() {
             <div className="mb-4">
               <label htmlFor="course" className="block mb-1">Course:</label>
               <input
-                type="text"
+                type="number"
                 id="course"
                 name="course"
                 value={formData.course}
@@ -170,8 +178,10 @@ function AddNewPatient() {
               />
             </div>
 
+            {error && <p className="text-red-500">{error}</p>}
+
             <button
-              onClick = {handleButtonClick}
+              onClick={handleButtonClick}
               className="absolute right-28 top-[98%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
             >
               Save

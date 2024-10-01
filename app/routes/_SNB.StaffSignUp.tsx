@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "@remix-run/react";
 
-
-// Type for the event objects
 type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
 type FormEvent = React.FormEvent<HTMLFormElement>;
 type MouseEvent = React.MouseEvent<HTMLButtonElement>;
@@ -20,10 +18,8 @@ function SignUp() {
     confirmPassword: "",
   });
   const [error, setError] = useState("");
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-
-  // Handle change in form inputs
   const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -32,7 +28,15 @@ function SignUp() {
     }));
   };
 
-  // Handle form submission
+  const isValidTel = (tel: string) => /^\d{10}$/.test(tel); 
+  const isValidBirthday = (birthday: string) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    return birthDate <= today; 
+  };
+  const isValidEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
+
   const handleSubmit = () => {
     const {
       username,
@@ -61,6 +65,21 @@ function SignUp() {
       return;
     }
 
+    if (!isValidTel(tel)) {
+      setError("Telephone number must be 10 digits.");
+      return;
+    }
+
+    if (!isValidBirthday(birthday)) {
+      setError("Birthday cannot be a future date.");
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -80,23 +99,23 @@ function SignUp() {
       confirmPassword: "",
     });
     setError("");
-    navigate('/StaffListView')
+    navigate("/StaffListView");
   };
 
   return (
     <div className="flex flex-row w-[78svw]">
       <div className="flex flex-row justify-center items-start w-[75svw] pt-10 pb-7">
         <div className="p-6 border border-gray-300 h-[115svh] rounded-3xl bg-white shadow-lg w-[40svw]">
-
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Sign up new staff</h1>
-            <div className="flex flex-row items-center">
-            </div>
+            <div className="flex flex-row items-center"></div>
           </div>
 
           <form>
             <div className="mb-4">
-              <label htmlFor="username" className="block mb-1">Username:</label>
+              <label htmlFor="username" className="block mb-1">
+                Username:
+              </label>
               <input
                 type="text"
                 id="username"
@@ -109,7 +128,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="name" className="block mb-1">Name:</label>
+              <label htmlFor="name" className="block mb-1">
+                Name:
+              </label>
               <input
                 type="text"
                 id="name"
@@ -122,7 +143,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="tel" className="block mb-1">Telephone:</label>
+              <label htmlFor="tel" className="block mb-1">
+                Telephone:
+              </label>
               <input
                 type="tel"
                 id="tel"
@@ -135,7 +158,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="birthday" className="block mb-1">Birthday:</label>
+              <label htmlFor="birthday" className="block mb-1">
+                Birthday:
+              </label>
               <input
                 type="date"
                 id="birthday"
@@ -148,7 +173,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="gender" className="block mb-1">Gender:</label>
+              <label htmlFor="gender" className="block mb-1">
+                Gender:
+              </label>
               <select
                 id="gender"
                 name="gender"
@@ -164,7 +191,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="role" className="block mb-1">Role:</label>
+              <label htmlFor="role" className="block mb-1">
+                Role:
+              </label>
               <select
                 id="role"
                 name="role"
@@ -180,7 +209,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="email" className="block mb-1">Email:</label>
+              <label htmlFor="email" className="block mb-1">
+                Email:
+              </label>
               <input
                 type="email"
                 id="email"
@@ -193,7 +224,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="password" className="block mb-1">Password:</label>
+              <label htmlFor="password" className="block mb-1">
+                Password:
+              </label>
               <input
                 type="password"
                 id="password"
@@ -206,7 +239,9 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="confirmPassword" className="block mb-1">Confirm Password:</label>
+              <label htmlFor="confirmPassword" className="block mb-1">
+                Confirm Password:
+              </label>
               <input
                 type="password"
                 id="confirmPassword"
