@@ -87,8 +87,8 @@ function AddNewPatient() {
 
   return (
     <div className="flex flex-row w-[78svw]">
-      <div className="flex flex-row justify-center items-start w-[75svw] pt-10 pb-7">
-        <div className="p-6 border border-gray-300 h-[100svh] rounded-3xl bg-white shadow-lg w-[40svw]">
+      <div className="flex flex-row justify-center items-start w-[75svw] h-screen pt-10 pb-7 ">
+        <div className="p-6 border border-gray-300 h-[90svh] rounded-3xl bg-white shadow-lg w-[40svw]">
 
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Add New Patient</h1>
@@ -182,7 +182,7 @@ function AddNewPatient() {
 
             <button
               onClick={handleButtonClick}
-              className="absolute right-28 top-[98%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
+              className="absolute right-28 bottom-9 transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
             >
               Save
             </button>
