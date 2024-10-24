@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import TreatmentCard from "./components/TreatmentCard";
 import PatientHeader from "./components/PatientHeader";
 

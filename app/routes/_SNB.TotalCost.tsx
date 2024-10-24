@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import PatientHeader from "./components/PatientHeader";
 
 function TotalCost() {

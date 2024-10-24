@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import SideNavBar from 'app/routes/_SNB';
@@ -16,14 +16,33 @@ interface Staff {
 
 const StaffListView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [staffList] = useState<Staff[]>([
-    { username: 'jdoe', name: 'John Doe', tel: '123-456-7890', birthDay: '1992-05-14', gender: 'Male', role: 'Doctor', email: 'jdoe@example.com' },
-    { username: 'asmith', name: 'Alice Smith', tel: '987-654-3210', birthDay: '1994-02-18', gender: 'Female', role: 'Nurse', email: 'asmith@example.com' },
-    { username: 'bfrank', name: 'Bob Frank', tel: '555-123-4567', birthDay: '1987-09-09', gender: 'Male', role: 'Technician', email: 'bfrank@example.com' },
-    { username: 'mwhite', name: 'Mary White', tel: '888-555-1234', birthDay: '1990-12-25', gender: 'Female', role: 'Administrator', email: 'mwhite@example.com' },
-  ]);
+  const [staffList, setStaffList] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://dinosaur.prakasitj.com/staff/getStaffList");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch staff data");
+        }
+
+        const data = await response.json();
+        setStaffList(data);
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array to fetch data on mount
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
@@ -40,6 +59,9 @@ const StaffListView: React.FC = () => {
   const filteredStaff = staffList.filter(staff =>
     staff.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="flex">

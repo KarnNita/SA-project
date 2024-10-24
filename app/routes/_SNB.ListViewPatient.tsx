@@ -1,212 +1,255 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import { useNavigate } from '@remix-run/react';
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
 interface Patient {
-    patientId: string;
-    name: string;
-    tel: string;
-    birthDay: string;
-    gender: string;
-    appointmentDate: string;
-    course: string;
+  patient_id: number;
+  name: string;
+  phone_number: string;
+  birthday: string;
+  gender: string;
+  appoinment_date: string;
+  course_count: number;
 }
+// export async function loader() {
+
+//     return await fetch("https://dinosaur.prakasitj.com/patient/getPatientList");
+
+//   }
 
 const ListViewPatient: React.FC = () => {
-    const navigate = useNavigate(); // ใช้ useNavigate เพื่อเข้าถึง navigate
+  const navigate = useNavigate();
+  const [patientList, setPatientList] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-    const [patientList, setPatientList] = React.useState<Patient[]>([
-        { patientId: 'P001', name: 'John Doe', tel: '123-456-7890', birthDay: '1994-05-14', gender: 'Male', appointmentDate: '2024-09-22', course: '10/10' },
-        { patientId: 'P002', name: 'Alice Smith', tel: '987-654-3210', birthDay: '1996-08-22', gender: 'Female', appointmentDate: '2024-09-25', course: '10/10' },
-        { patientId: 'P003', name: 'Bob Frank', tel: '555-123-4567', birthDay: '1989-03-12', gender: 'Male', appointmentDate: '2024-09-29', course: '10/10' },
-        { patientId: 'P004', name: 'Mary White', tel: '888-555-1234', birthDay: '1992-07-25', gender: 'Female', appointmentDate: '2024-10-01', course: '10/10' },
-    ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://dinosaur.prakasitj.com/patient/getPatientList"
+        );
 
-    const [searchTerm, setSearchTerm] = React.useState<string>('');
+        if (!response.ok) {
+          throw new Error("Failed to fetch patient data");
+        }
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
+        const data = await response.json();
+        setPatientList(data);
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    const handleEditPatient = () => {
-        navigate('/PatientDetail'); // นำทางไปยังหน้า PatientDetail
-    };
+    fetchData();
+  }, []); // Empty dependency array to fetch data on mount
 
-    const handleSelectTreatment = () => {
-        navigate('/treatmentSelect'); // นำทางไปยังหน้า TreatmentSelect
-    };
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
 
-    const handleAddNewPatient = () => {
-        navigate('/AddNewPatient'); // นำทางไปยังหน้า AddNewPatient
-    };
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
 
-    const filteredPatients = patientList.filter((patient) =>
-        patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const handleEditPatient = () => {
+    navigate("/PatientDetail"); // นำทางไปยังหน้า PatientDetail
+  };
 
-    return (
+  const handleSelectTreatment = () => {
+    navigate("/treatmentSelect"); // นำทางไปยังหน้า TreatmentSelect
+  };
+
+  const handleAddNewPatient = () => {
+    navigate("/AddNewPatient"); // นำทางไปยังหน้า AddNewPatient
+  };
+
+  const filteredPatients = patientList.filter(
+    (patient: Patient) =>
+      // patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    // ไอโค้ดบรรทัดบนมันแตกตรง toLowerCase กับ includes
+      patient
+  );
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
+  return (
+    <div
+      className="page-background"
+      style={{
+        backgroundColor: "#DCE8E9",
+        width: "100%",
+        minHeight: "100vh",
+        padding: "50px",
+        boxSizing: "border-box",
+      }}
+    >
+      <div
+        className="patient-list-view-container"
+        style={{
+          width: "1120px",
+          height: "850px",
+          padding: "30px",
+          backgroundColor: "#ffffff",
+          borderRadius: "50px 5px 5px 50px",
+          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+          margin: "auto",
+        }}
+      >
         <div
-            className="page-background"
-            style={{
-                backgroundColor: '#DCE8E9',
-                width: '100%',
-                minHeight: '100vh',
-                padding: '50px',
-                boxSizing: 'border-box',
-            }}
+          className="header"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
         >
-            <div
-                className="patient-list-view-container"
-                style={{
-                    width: '1120px',
-                    height: '850px',
-                    padding: '30px',
-                    backgroundColor: '#ffffff',
-                    borderRadius: '50px 5px 5px 50px',
-                    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-                    margin: 'auto',
-                }}
+          <h2 style={{ fontSize: "28px", color: "#2F919C" }}>
+            List View Patient
+          </h2>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              cursor: "pointer",
+            }}
+            onClick={handleAddNewPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
+          >
+            <span
+              style={{
+                padding: "8px",
+                backgroundColor: "#f0c040",
+                borderRadius: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: "10px",
+              }}
             >
-                <div
-                    className="header"
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '20px',
-                    }}
-                >
-                    <h2 style={{ fontSize: '28px', color: '#2F919C' }}>List View Patient</h2>
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                        }}
-                        onClick={handleAddNewPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
-                    >
-                        <span
-                            style={{
-                                padding: '8px',
-                                backgroundColor: '#f0c040',
-                                borderRadius: '12px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginRight: '10px',
-                            }}
-                        >
-                            <FontAwesomeIcon icon={faUserPlus} style={{ color: '#000000' }} />
-                        </span>
-                        <span style={{ color: '#000000', textDecoration: 'underline', cursor: 'pointer' }}>
-                            Add new Patient
-                        </span>
-                    </div>
-                </div>
-
-                <div
-                    className="search-bar"
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        marginBottom: '20px',
-                    }}
-                >
-                    <input
-                        type="text"
-                        placeholder="searching..."
-                        value={searchTerm}
-                        onChange={handleSearch}
-                        style={{
-                            width: '300px',
-                            padding: '10px',
-                            borderRadius: '20px',
-                            border: '1px solid #ccc',
-                            fontSize: '16px',
-                        }}
-                    />
-                </div>
-
-                <div
-                    className="patient-list"
-                    style={{
-                        backgroundColor: '#DCE8E9',
-                        borderRadius: '10px',
-                        padding: '20px',
-                        height: '100%',
-                    }}
-                >
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr>
-                                <th style={thTdStyle}>Patient ID</th>
-                                <th style={thTdStyle}>Name</th>
-                                <th style={thTdStyle}>Tel</th>
-                                <th style={thTdStyle}>Birth Day</th>
-                                <th style={thTdStyle}>Gender</th>
-                                <th style={thTdStyle}>Appointment Date</th>
-                                <th style={thTdStyle}>Course</th>
-                                <th style={thTdStyle}></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredPatients.map((patient, index) => (
-                                <tr key={index} style={{ borderBottom: '1px solid white' }}>
-                                    <td style={thTdStyle}>{patient.patientId}</td>
-                                    <td style={thTdStyle}>
-                                        <a
-                                            href="#"
-                                            onClick={handleEditPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
-                                            style={{
-                                                color: '#2F919C',
-                                                cursor: 'pointer',
-                                                textDecoration: 'underline',
-                                            }}
-                                        >
-                                            {patient.name}
-                                        </a>
-                                    </td>
-                                    <td style={thTdStyle}>{patient.tel}</td>
-                                    <td style={thTdStyle}>{patient.birthDay}</td>
-                                    <td style={thTdStyle}>{patient.gender}</td>
-                                    <td style={thTdStyle}>{patient.appointmentDate}</td>
-                                    <td style={thTdStyle}>{patient.course}</td>
-                                    <td style={thTdStyle}>
-                                        <button
-                                            style={{
-                                                ...buttonStyle,
-                                                backgroundColor: '#2F919C',
-                                                color: 'white',
-                                            }}
-                                            onClick={handleSelectTreatment} // เพิ่มฟังก์ชันเมื่อคลิกปุ่ม
-                                        >
-                                            Select Treatment
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+              <FontAwesomeIcon icon={faUserPlus} style={{ color: "#000000" }} />
+            </span>
+            <span
+              style={{
+                color: "#000000",
+                textDecoration: "underline",
+                cursor: "pointer",
+              }}
+            >
+              Add new Patient
+            </span>
+          </div>
         </div>
-    );
+
+        <div
+          className="search-bar"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "20px",
+          }}
+        >
+          <input
+            type="text"
+            placeholder="searching..."
+            value={searchTerm}
+            onChange={handleSearch}
+            style={{
+              width: "300px",
+              padding: "10px",
+              borderRadius: "20px",
+              border: "1px solid #ccc",
+              fontSize: "16px",
+            }}
+          />
+        </div>
+
+        <div
+          className="patient-list"
+          style={{
+            backgroundColor: "#DCE8E9",
+            borderRadius: "10px",
+            padding: "20px",
+            height: "100%",
+          }}
+        >
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={thTdStyle}>Patient ID</th>
+                <th style={thTdStyle}>Name</th>
+                <th style={thTdStyle}>Tel</th>
+                <th style={thTdStyle}>Birth Day</th>
+                <th style={thTdStyle}>Gender</th>
+                <th style={thTdStyle}>Appointment Date</th>
+                <th style={thTdStyle}>Course</th>
+                <th style={thTdStyle}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPatients.map((patient: Patient, index: number) => (
+                <tr key={index} style={{ borderBottom: "1px solid white" }}>
+                  <td style={thTdStyle}>{patient.patient_id}</td>
+                  <td style={thTdStyle}>
+                    <a
+                      href="#"
+                      onClick={handleEditPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
+                      style={{
+                        color: "#2F919C",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      {patient.name}
+                    </a>
+                  </td>
+                  <td style={thTdStyle}>{patient.phone_number}</td>
+                  <td style={thTdStyle}>
+                    {new Date(patient.birthday).toString()}
+                  </td>
+                  <td style={thTdStyle}>{patient.gender}</td>
+                  <td style={thTdStyle}>
+                    {new Date(patient.appoinment_date).toString()}
+                  </td>
+                  <td style={thTdStyle}>{patient.course_count}</td>
+                  <td style={thTdStyle}>
+                    <button
+                      style={{
+                        ...buttonStyle,
+                        backgroundColor: "#2F919C",
+                        color: "white",
+                      }}
+                      onClick={handleSelectTreatment} // เพิ่มฟังก์ชันเมื่อคลิกปุ่ม
+                    >
+                      Select Treatment
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const buttonStyle: React.CSSProperties = {
-    backgroundColor: '#f0c040',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '20px',
-    cursor: 'pointer',
-    fontWeight: 'bold',
-    transition: 'background-color 0.3s ease',
+  backgroundColor: "#f0c040",
+  border: "none",
+  padding: "10px 20px",
+  borderRadius: "20px",
+  cursor: "pointer",
+  fontWeight: "bold",
+  transition: "background-color 0.3s ease",
 };
 
 const thTdStyle: React.CSSProperties = {
-    padding: '12px',
-    textAlign: 'left',
+  padding: "12px",
+  textAlign: "left",
 };
 
 export default ListViewPatient;

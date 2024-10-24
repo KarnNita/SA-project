@@ -1,5 +1,20 @@
 import { CiUser } from "react-icons/ci";
-import { useNavigate } from '@remix-run/react';
+import { useLoaderData, useNavigate } from '@remix-run/react';
+import React from 'react';
+
+interface Patient {
+    patient_id: number;
+    name: string;
+    phone_number: string;
+    birthday: string;
+    gender: string;
+    appoinment_date: string;
+    course_count: number;
+}
+export async function loader() {
+    return await fetch("https://dinosaur.prakasitj.com/patient/getPatientList");
+    
+  }
 
 function Home() {
     const navigate = useNavigate(); // สร้าง instance ของ navigate
@@ -7,6 +22,15 @@ function Home() {
     const handleSeeAllClick = () => {
         navigate('/ListViewPatient'); // เปลี่ยนเส้นทางไปยังหน้า ListViewPatient
     };
+
+    const patientList = useLoaderData<typeof loader>();
+    console.table(patientList);
+
+    const [searchTerm, setSearchTerm] = React.useState<string>('');
+
+    const filteredPatients = patientList.filter((patient:Patient) =>
+        patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="flex flex-row w-[78svw]">
@@ -32,37 +56,34 @@ function Home() {
                     </div>
 
                     <div className="mt-6">
-                        <table className="min-w-full bg-[#DCE8E9] border divide-white h-[70svh]">
-                            <thead>
-                                <tr>
-                                    <th className="py-2 px-4 text-left">Patient ID</th>
-                                    <th className="py-2 px-4 text-left">Name</th>
-                                    <th className="py-2 px-4 text-left">Appointment Date</th>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr>
+                                <th style={thTdStyle}>Patient ID</th>
+                                <th style={thTdStyle}>Name</th>
+                                <th style={thTdStyle}>Tel</th>
+                                <th style={thTdStyle}>Birth Day</th>
+                                <th style={thTdStyle}>Gender</th>
+                                <th style={thTdStyle}>Appointment Date</th>
+                                <th style={thTdStyle}>Course</th>
+                                <th style={thTdStyle}></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredPatients.map((patient:Patient, index:number) => (
+                                <tr key={index} style={{ borderBottom: '1px solid white' }}>
+                                    <td style={thTdStyle}>{patient.phone_number}</td>
+                                    <td style={thTdStyle}>{new Date (patient.birthday).toString()}</td>
+                                    <td style={thTdStyle}>{patient.gender}</td>
+                                    <td style={thTdStyle}>{new Date (patient.appoinment_date).toString()}</td>
+                                    <td style={thTdStyle}>{patient.course_count}</td>
+                                    <td style={thTdStyle}>
+
+                                    </td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="py-2 px-4">P001</td>
-                                    <td className="py-2 px-4">John Doe</td>
-                                    <td className="py-2 px-4">2024-09-22</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-2 px-4">P002</td>
-                                    <td className="py-2 px-4">Alice Smith</td>
-                                    <td className="py-2 px-4">2024-09-25</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-2 px-4">P003</td>
-                                    <td className="py-2 px-4">Bob Frank</td>
-                                    <td className="py-2 px-4">2024-09-29</td>
-                                </tr>
-                                <tr>
-                                    <td className="py-2 px-4">P004</td>
-                                    <td className="py-2 px-4">Mary White</td>
-                                    <td className="py-2 px-4">2024-10-01</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            ))}
+                        </tbody>
+                    </table>
                     </div>
                 </div>
             </div>
@@ -112,5 +133,10 @@ function PatientRow() {
         </div>
     );
 }
+
+const thTdStyle: React.CSSProperties = {
+    padding: '12px',
+    textAlign: 'left',
+};
 
 export default Home;
