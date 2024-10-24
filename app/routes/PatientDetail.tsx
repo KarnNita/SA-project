@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SideNavBar from "./_SNB";
 
 const PatientDetail: React.FC = () => {
   const [patient, setPatient] = useState({
@@ -12,92 +13,67 @@ const PatientDetail: React.FC = () => {
   });
 
   return (
-    <div style={{ display: 'flex', backgroundColor: '#f0f4f7', height: '100vh' }}>
-      {/* แถบเครื่องมือด้านซ้าย */}
-      <div style={{
-        width: '15%', backgroundColor: '#2F919C', color: 'white',
-        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
-        padding: '20px', borderTopRightRadius: '30px', borderBottomRightRadius: '30px'
-      }}>
-        <h3>Clinic Application</h3>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          <li style={{ margin: '20px 0' }}>Home Menu</li>
-          <li style={{ margin: '20px 0' }}>Staff List</li>
-          <li style={{ margin: '20px 0' }}>Add new patient</li>
-          <li style={{ margin: '20px 0' }}>Equipment</li>
-        </ul>
-        <button style={{
-          backgroundColor: 'white', width: '165px', color: '#256d7b',
-          border: 'none', padding: '10px', borderRadius: '8px', cursor: 'pointer'
-        }}>LOG OUT</button>
-      </div>
-
+    <div className="flex h-[100svh] bg-[#f0f4f7]">
+      <SideNavBar />
       {/* เนื้อหาหลัก */}
-      <div style={{ width: '80%', padding: '40px', backgroundColor: 'white', borderRadius: '75px', margin: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
-          <h1 style={{ fontSize: '20px', color: '#2F919C' }}>Patient Detail</h1>
-          <h1 style={{ fontSize: '18px', marginRight: '20px' }}>Edit Patient</h1>
+      <div className="flex flex-col flex-grow bg-white mx-5 my-5 rounded-[60px] border border-gray-300 h-[calc(100svh-50px)] shadow-[0px_4px_4px_rgba(0,0,0,0.25)]">
+        <div className="flex justify-between items-center p-10">
+          <h1 className="text-[#2F919C] text-2xl">Patient Detail</h1>
         </div>
-
+  
         {/* วงกลมตกแต่ง */}
-        <div style={{
-          width: '19px', height: '19px', backgroundColor: '#FFD06C',
-          borderRadius: '40%', margin: '20px auto', position: 'absolute',
-          top: '45px', right: '225px'
-        }}></div>
-
+        <div className="w-5 h-5 bg-[#FFD06C] rounded-full absolute top-[63px] right-[285px]"></div>
+        <div className="w-5 h-5 bg-[#FFD06C] rounded-full absolute top-[63px] right-[500px]"></div>
+        <h1 className="w-5 h-5 rounded-full absolute top-[60px] right-[225px] text-lg mr-8">EditPatient</h1>
+        <h1 className="w-5 h-5 rounded-full absolute top-[59px] right-[440px] text-lg mr-8">MedicalHistory</h1>
+  
         {/* ข้อมูลของผู้ป่วย */}
-        <div style={{ backgroundColor: '#DCE8E9', padding: '20px', borderRadius: '25px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-            <div style={{ display: 'grid', gap: '17px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+        <div className="bg-[#DCE8E9] p-5 rounded-xl mx-10 w-[1000px] h-[220px]">
+          <div className="grid grid-cols-2 gap-10">
+            <div className="space-y-4">
+              <div className="grid grid-cols-3">
                 <label>Full name:</label>
-                <input type="text" value={patient.fullName} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.fullName} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+              <div className="grid grid-cols-3 items-center">
                 <label>Patient ID:</label>
-                <input type="text" value={patient.patientID} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.patientID} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+              <div className="grid grid-cols-3 items-center">
                 <label>Appointment Date:</label>
-                <input type="text" value={patient.appointmentDate} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.appointmentDate} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
             </div>
-
-            <div style={{ display: 'grid', gap: '17px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+            <div className="space-y-4">
+              <div className="grid grid-cols-6 items-center">
                 <label>Gender:</label>
-                <input type="text" value={patient.gender} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.gender} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+              <div className="grid grid-cols-6 items-center">
                 <label>Age:</label>
-                <input type="text" value={patient.age} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.age} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '150px 1fr', alignItems: 'center' }}>
+              <div className="grid grid-cols-6 items-center">
                 <label>Tel:</label>
-                <input type="text" value={patient.tel} readOnly style={{ padding: '8px', borderRadius: '10px', border: '1px solid #ccc', width: '250px' }} />
+                <input type="text" value={patient.tel} readOnly className="p-2 rounded-lg border border-gray-300 w-[250px]" />
               </div>
             </div>
           </div>
         </div>
-
+  
         {/* ตารางนัดหมาย */}
-        <div style={{ color: '#BCBCBC', backgroundColor: '#DCE8E9', padding: '120px', borderRadius: '25px', marginTop: '20px', width: '100%', textAlign: 'center' }}>
+        <div className="bg-[#DCE8E9] p-28 rounded-xl mx-10 my-5 text-center text-gray-500">
           <h1>Appointment Schedule</h1>
         </div>
-
+  
         {/* ปุ่มเลือกการรักษา */}
-        <button style={{
-          backgroundColor: '#2F919C', color: 'white', border: 'none',
-          padding: '10px 20px', cursor: 'pointer', marginTop: '20px', borderRadius: '5px', marginLeft: 'auto'
-        }}>Select Treatment</button>
+        <button className="bg-[#2F919C] text-white px-5 py-2 rounded-md ml-auto mr-10 mt-5">
+          Select Treatment
+        </button>
       </div>
     </div>
   );
+  
 };
 
 export default PatientDetail;

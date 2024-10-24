@@ -24,7 +24,7 @@ function EditPatient() {
 
   const handleSave = () => {
     alert('Saved.');
-    navigate('/PatientDetail'); // Navigate to patient details page after save
+    navigate('/PatientDetail');
   };
 
   return (
