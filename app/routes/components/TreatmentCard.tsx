@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface TreatmentCardProps {
-  treatmentName: string; // Add a unique name for each treatment
+  treatmentName: string;
   item1: string;
   item2: string;
   item3: string;

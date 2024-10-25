@@ -1,7 +1,8 @@
 import PatientHeader from "./components/PatientHeader";
 import { useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from "react";
-import TreatmentSelect from "./_SNB.TreatmentSelect";
+import { useNavigate } from 'react-router-dom';
+import { useSelectedTreatments } from "./SelectedTreatmentsContext";
 
 interface OutputRowProps {
     treatment: string;
@@ -14,33 +15,19 @@ interface Finance {
 }
 
 const TotalCost: React.FC = () => {
-    const location = useLocation();
-    const { selectedTreatments } = location.state || { selectedTreatments: [] };
+    const { selectedTreatments } = useSelectedTreatments();
     const [financeList, setFinanceList] = useState<Finance[]>([]);
     const [totalCost, setTotalCost] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await fetch(`https://dinosaur.prakasitj.com/treatmenttype/searchbyName?names=${selectedTreatments.join(",")}`);
-                
-                if (!response.ok) throw new Error("Failed to fetch treatment data");
+            const response = await fetch(`https://dinosaur.prakasitj.com/treatmenttype/searchbyName?names=${selectedTreatments.join(",")}`);
+            const data = await response.json();
+            setFinanceList(data);
 
-                const data = await response.json();
-                setFinanceList(data);
-                
-                // Calculate total cost based on fetched finance data
-                const total = data.reduce((acc: number, item: Finance) => acc + (item.cost || 0), 0);
-                setTotalCost(total);
-
-            } catch (err) {
-                setError("Failed to load data");
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
+            const total = data.reduce((acc: any, item: { cost: any; }) => acc + item.cost, 0);
+            setTotalCost(total);
         };
 
         fetchData();

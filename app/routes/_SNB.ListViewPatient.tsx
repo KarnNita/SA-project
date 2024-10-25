@@ -69,7 +69,6 @@ const ListViewPatient: React.FC = () => {
   const filteredPatients = patientList.filter(
     (patient: Patient) =>
       // patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-      // ไอโค้ดบรรทัดบนมันแตกตรง toLowerCase กับ includes
       patient
   );
 

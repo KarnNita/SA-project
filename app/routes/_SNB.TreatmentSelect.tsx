@@ -16,8 +16,9 @@ const TreatmentSelect: React.FC = () => {
   };
 
   const handleNextPage = () => {
-    navigate('/totalCost', { state: { selectedTreatments } });
+    navigate("/totalCost", { state: { selectedTreatments } });
   };
+
 
   return (
     <div className="flex flex-row justify-center items-start w-[80svw] pt-10 pb-7">
@@ -30,7 +31,7 @@ const TreatmentSelect: React.FC = () => {
 
         <div className="flex flex-col gap-[0.65rem] mt-5">
           <TreatmentCard
-            treatmentName="Treatment 1"
+            treatmentName="Acupuncture"
             item1="Needle size 1"
             item2="Needle size 2"
             item3="Cotton"

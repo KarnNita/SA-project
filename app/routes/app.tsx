@@ -4,10 +4,11 @@ import Home from './_SNB.Home';
 import AddNewPatient from './_SNB.AddNewPatient';
 import TotalCost from './_SNB.TotalCost';
 import TreatmentSelect from './_SNB.TreatmentSelect';
-import { useSelectedTreatment } from "./SelectedTreatmentProvider";
+import { SelectedTreatmentsProvider } from './SelectedTreatmentsContext';
 import StaffListView from './StaffListView';
 import Equipment from './Equipment';
 import IncomeExpenses from './IncomeExpenses';
+import ListViewPatient from './_SNB.ListViewPatient';
 
 function App() {
   return (
@@ -16,10 +17,14 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/addNewPatient" element={<AddNewPatient />} />
         <Route path="/selectTreatment" element={<TreatmentSelect />} />
-        <Route path="/totalCost" element={<TotalCost />} />
+        <SelectedTreatmentsProvider>
+            <TotalCost />
+        </SelectedTreatmentsProvider>
+        {/* <Route path="/totalCost" element={<TotalCost />} /> */}
         <Route path="/staffListView" element={<StaffListView/>}/>
-        <Route path="/equiment" element={<Equipment />} />
+        <Route path="/equipment" element={<Equipment />} />
         <Route path="/incomeExpenses" element={<IncomeExpenses />} />
+        <Route path="/listViewPatient" element={<ListViewPatient/>}/>
       </Routes>
     </Router>
   );
