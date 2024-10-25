@@ -5,7 +5,7 @@ import { useLoaderData, useNavigate } from "@remix-run/react";
 
 interface Patient {
   patient_id: number;
-  name: string;
+  name_surname: string;
   phone_number: string;
   birthday: string;
   gender: string;
@@ -69,7 +69,7 @@ const ListViewPatient: React.FC = () => {
   const filteredPatients = patientList.filter(
     (patient: Patient) =>
       // patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-    // ไอโค้ดบรรทัดบนมันแตกตรง toLowerCase กับ includes
+      // ไอโค้ดบรรทัดบนมันแตกตรง toLowerCase กับ includes
       patient
   );
 
@@ -173,7 +173,9 @@ const ListViewPatient: React.FC = () => {
             backgroundColor: "#DCE8E9",
             borderRadius: "10px",
             padding: "20px",
-            height: "100%",
+            height: "100%", // Set this to control height of the container
+            maxHeight: "650px", // Set a fixed max height for scrollable area
+            overflowY: "auto", // Enables scrolling when content overflows vertically
           }}
         >
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -193,19 +195,7 @@ const ListViewPatient: React.FC = () => {
               {filteredPatients.map((patient: Patient, index: number) => (
                 <tr key={index} style={{ borderBottom: "1px solid white" }}>
                   <td style={thTdStyle}>{patient.patient_id}</td>
-                  <td style={thTdStyle}>
-                    <a
-                      href="#"
-                      onClick={handleEditPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
-                      style={{
-                        color: "#2F919C",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                      }}
-                    >
-                      {patient.name}
-                    </a>
-                  </td>
+                  <td style={thTdStyle}>{patient.name_surname}</td>
                   <td style={thTdStyle}>{patient.phone_number}</td>
                   <td style={thTdStyle}>
                     {new Date(patient.birthday).toString()}
@@ -222,7 +212,7 @@ const ListViewPatient: React.FC = () => {
                         backgroundColor: "#2F919C",
                         color: "white",
                       }}
-                      onClick={handleSelectTreatment} // เพิ่มฟังก์ชันเมื่อคลิกปุ่ม
+                      onClick={handleSelectTreatment}
                     >
                       Select Treatment
                     </button>

@@ -22,7 +22,7 @@ function SideNavBar() {
             <li className="flex flex-col items-center pt-9">
               <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
                 <IoMdHome size={26} className="mb-2" />
-                <button onClick={() => navigate("/Home")} className="text-lg block">
+                <button onClick={() => navigate("/home")} className="text-lg block">
                   Home Menu
                 </button>
               </div>
@@ -30,7 +30,7 @@ function SideNavBar() {
             <li className="flex flex-col items-center">
               <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
                 <FaUser size={20} className="mb-2" />
-                <button onClick={() => navigate("/StaffListView")} className="text-lg block">
+                <button onClick={() => navigate("/staffListView")} className="text-lg block">
                   Staff List
                 </button>
               </div>
@@ -38,7 +38,7 @@ function SideNavBar() {
             <li className="flex flex-col items-center">
               <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
                 <IoPersonAddSharp size={20} className="mb-2" />
-                <button onClick={() => navigate("/AddNewPatient")} className="text-lg block">
+                <button onClick={() => navigate("/addNewPatient")} className="text-lg block">
                   Add New Patient
                 </button>
               </div>
@@ -46,7 +46,7 @@ function SideNavBar() {
             <li className="flex flex-col items-center">
               <div 
                 className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition cursor-pointer" 
-                onClick={() => navigate("/IncomeExpenses")}
+                onClick={() => navigate("/incomeExpenses")}
               >
                 <RiExchange2Fill size={24} className="mb-2" />
                 <span className="text-lg block">Income Expenses</span>
@@ -55,7 +55,7 @@ function SideNavBar() {
             <li className="flex flex-col items-center">
               <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
                 <FaWrench size={20} className="mb-2" />
-                <button onClick={() => navigate("/Equipment")} className="text-lg block">
+                <button onClick={() => navigate("/equipment")} className="text-lg block">
                   Equipment
                 </button>
               </div>

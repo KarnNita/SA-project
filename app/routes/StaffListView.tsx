@@ -5,10 +5,11 @@ import SideNavBar from 'app/routes/_SNB';
 import { useNavigate } from '@remix-run/react';
 
 interface Staff {
+  staff_id: number;
   username: string;
-  name: string;
-  tel: string;
-  birthDay: string;
+  staff_name: string;
+  staff_phone_number: string;
+  birthday: string;
   gender: string;
   role: string;
   email: string;
@@ -57,7 +58,8 @@ const StaffListView: React.FC = () => {
   };
 
   const filteredStaff = staffList.filter(staff =>
-    staff.name.toLowerCase().includes(searchTerm.toLowerCase())
+    // staff.name.toLowerCase().includes(searchTerm.toLowerCase())
+    staff
   );
 
   if (loading) return <p>Loading...</p>;
@@ -106,9 +108,9 @@ const StaffListView: React.FC = () => {
                 {filteredStaff.map((staff, index) => (
                   <tr key={index} style={{ borderBottom: '1px solid white' }}>
                     <td style={thTdStyle}>{staff.username}</td>
-                    <td style={thTdStyle}>{staff.name}</td>
-                    <td style={thTdStyle}>{staff.tel}</td>
-                    <td style={thTdStyle}>{staff.birthDay}</td>
+                    <td style={thTdStyle}>{staff.staff_name}</td>
+                    <td style={thTdStyle}>{staff.staff_phone_number}</td>
+                    <td style={thTdStyle}>{staff.birthday}</td>
                     <td style={thTdStyle}>{staff.gender}</td>
                     <td style={thTdStyle}>{staff.role}</td>
                     <td style={thTdStyle}>{staff.email}</td>

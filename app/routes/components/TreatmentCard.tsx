@@ -1,12 +1,21 @@
 import { useState } from "react";
 
-interface TreatmentCardProps{
-  item1:string;
-  item2:string;
-  item3:string;
+interface TreatmentCardProps {
+  treatmentName: string; // Add a unique name for each treatment
+  item1: string;
+  item2: string;
+  item3: string;
+  onTreatmentSelect: (treatmentName: string, isSelected: boolean) => void; // Callback to parent
 }
-export default function TreatmentCard({item1, item2, item3}: TreatmentCardProps) {
+
+export default function TreatmentCard({ treatmentName, item1, item2, item3, onTreatmentSelect }: TreatmentCardProps) {
   const [checked, setChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setChecked((prev) => !prev);
+    onTreatmentSelect(treatmentName, !checked); // Send selected status back to parent
+  };
+
   return (
     <div className="flex flex-row pt-5 pl-5 pr-5 pb-6 bg-[#DCE8E9] rounded-3xl items-center gap-6">
       <div
@@ -20,59 +29,62 @@ export default function TreatmentCard({item1, item2, item3}: TreatmentCardProps)
       </div>
 
       <div className="flex flex-col self-start gap-2 ">
-        <h1 className="text-2xl text-[#1FA1AF] pb-1">Treatment Name</h1>
-        <InputRow text="Use" item={item1}/>
-        <InputRow text="" item={item2}/>
-        <InputRow text="" item={item3}/>
+        <h1 className="text-2xl text-[#1FA1AF] pb-1">{treatmentName}</h1> {/* Display treatment name */}
+        <InputRow text="Use" item={item1} />
+        <InputRow text="Use" item={item2} />
+        <InputRow text="Use" item={item3} />
 
         <div className="flex flex-row gap-3 pt-2">
-          <h1>
-            Choose Doctor:
-          </h1>
+          <h1>Choose Doctor:</h1>
           <select className="w-[19.09rem] rounded-3xl text-center">
             <option value="">Select Doctor</option>
             <option value="Doctor1">Doctor1</option>
             <option value="Doctor2">Doctor2</option>
           </select>
         </div>
-
       </div>
 
       <div className="flex flex-row justify-center items-center gap-2">
         <div className="grid">
-          
           <input
             type="checkbox"
-            onChange={()=>{setChecked(!checked)}}
+            checked={checked}
+            onChange={handleCheckboxChange} // Correctly call the handler
             className="w-4 h-4 appearance-none border-2 border-white rounded-[0.2rem] checked:bg-white checked:border-transparent focus:outline-none shadow-inner col-start-1 row-start-1"
           />
-          <svg className={`col-start-1 row-start-1 ml-[0.1rem] ${checked?"visible":"invisible"}`} xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="13" height="15" viewBox="0 0 30 30" style={{pointerEvents: "none"}}>
+          <svg
+            className={`col-start-1 row-start-1 ml-[0.1rem] ${checked ? "visible" : "invisible"}`}
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width="13"
+            height="15"
+            viewBox="0 0 30 30"
+            style={{ pointerEvents: "none" }}
+          >
             <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
           </svg>
-          
         </div>
-        <h1 className="pb-1">
-          select
-        </h1>
+        <h1 className="pb-1">Select</h1>
       </div>
     </div>
   );
 }
 
-interface InputRowProps{
-  text:string;
-  item:string;
+interface InputRowProps {
+  text: string;
+  item: string;
 }
 
-function InputRow({text, item}:InputRowProps){
-  return(
+function InputRow({ text, item }: InputRowProps) {
+  return (
     <div className="flex flex-row gap-2">
-      {text!=""?<h1>{text}</h1>:<div className="mr-[1.6352rem]"></div>}
-          
-          <div className="flex flex-row bg-white rounded-3xl w-[12rem] justify-center">
-            <h1>{item}</h1>
-          </div>
-          <input className="rounded-3xl w-[12rem]"></input>
-        </div>
+      {text !== "" ? <h1>{text}</h1> : <div className="mr-[1.6352rem]"></div>}
+
+      <div className="flex flex-row bg-white rounded-3xl w-[12rem] justify-center">
+        <h1>{item}</h1>
+      </div>
+      <input className="rounded-3xl w-[12rem]"></input>
+    </div>
   );
 }
