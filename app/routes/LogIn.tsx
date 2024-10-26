@@ -24,6 +24,7 @@ function LogIn() {
     setUsername("");
     setPassword("");
     setError("");
+    sessionStorage.setItem('currentUser', username);
 
     navigate('/home')
   };

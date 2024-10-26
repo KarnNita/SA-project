@@ -8,7 +8,7 @@ function AddNewPatient() {
     birthday: "",
     gender: "",
     appointment_date: "",
-    course_count: "",
+    course_count: 0,
     first_visit_date: new Date().toISOString().slice(0, 10),
   });
   const [error, setError] = useState<string>("");
@@ -40,12 +40,12 @@ function AddNewPatient() {
       return false;
     }
 
-    if (parseInt(course_count) < 0) {
+    if (course_count < 0) {
       setError("Course count cannot be negative.");
       return false;
     }
 
-    if (isNaN(parseInt(course_count))) {
+    if (isNaN(course_count)) {
       setError("Course count must be a valid number.");
       return false;
     }
@@ -55,6 +55,7 @@ function AddNewPatient() {
 
   const submitToApi = async () => {
     try {
+      formData.appointment_date = new Date(formData.appointment_date).toISOString();
       const response = await fetch("https://dinosaur.prakasitj.com/patient/addPatient", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -1,6 +1,6 @@
 import { CiUser } from "react-icons/ci";
 import { useLoaderData, useNavigate } from "@remix-run/react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 interface Patient {
   patient_id: number;
@@ -12,18 +12,41 @@ interface Patient {
   course_count: number;
 }
 
-export async function loader() {
-  return await fetch("https://dinosaur.prakasitj.com/patient/getPatientList");
-}
+const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const [patientList, setPatientList] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://dinosaur.prakasitj.com/patient/getPatientList"
+        );
 
-function Home() {
-  const navigate = useNavigate(); // สร้าง instance ของ navigate
+        if (!response.ok) {
+          throw new Error("Failed to fetch patient data");
+        }
+
+        const data:Patient[]  = await response.json();
+        data.sort((a, b) => a.patient_id - b.patient_id);
+        setPatientList(data);
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array to fetch data on mount
 
   const handleSeeAllClick = () => {
     navigate("/ListViewPatient"); // เปลี่ยนเส้นทางไปยังหน้า ListViewPatient
   };
 
-  const patientList = useLoaderData<typeof loader>();
   console.table(patientList);
 
   const [searchTerm, setSearchTerm] = React.useState<string>("");
@@ -40,30 +63,24 @@ function Home() {
         <div className="p-6 border border-gray-300 h-[100svh] rounded-3xl bg-white shadow-lg w-[53svw]">
           <div className="flex flex-row">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-[#1FA1AF] text-2xl">Patient List</h1>
+              <h1 className="text-[#1FA1AF] text-2xl">Today's Patient List</h1>
             </div>
             <div className="flex flexrow">
-              <div className="bg-[#DCE8E9] w-7 h-7 ml-[35svw] rounded-full">
+              <div className="bg-[#DCE8E9] w-7 h-7 ml-[26svw] rounded-full">
                 <CiUser className="ml-1 mt-1 text-[#1FA1AF]" size={20} />
               </div>
               <h1
                 className="text-[#1FA1AF] ml-2 mt-[0.1rem]"
                 onClick={handleSeeAllClick}
               >
-                See All
+                See All Patient
               </h1>
             </div>
           </div>
 
-          <div className="flex flex-row gap-8">
-            <DateHeader />
-            <DateHeader />
-            <DateHeader />
-          </div>
-
           <div
             className="mt-6 bg-[#DCE8E9] rounded-2xl"
-            style={{ maxHeight: "70vh", overflowY: "auto" }}
+            style={{ maxHeight: "80vh", overflowY: "auto" }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
@@ -99,20 +116,6 @@ function Home() {
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col mt-10">
-        <div className="flex flex-col bg-white w-[17svw] h-[50svh] rounded-3xl gap-3">
-          <h1 className="font-semibold pl-8 pt-5">Next Day List</h1>
-          <div
-            className="bg-[#94dfd9] w-[13svw] h-3 ml-8 rounded-3xl"
-            style={{ filter: "drop-shadow(0 0.25rem 0.125rem #C3C3C3)" }}
-          />
-          <PatientRow />
-          <PatientRow />
-          <PatientRow />
-          <PatientRow />
         </div>
       </div>
     </div>

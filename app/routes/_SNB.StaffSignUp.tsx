@@ -1,15 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
 import { useNavigate } from "@remix-run/react";
-
-type ChangeEvent = React.ChangeEvent<HTMLInputElement | HTMLSelectElement>;
-type FormEvent = React.FormEvent<HTMLFormElement>;
-type MouseEvent = React.MouseEvent<HTMLButtonElement>;
 
 function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
-    name: "",
-    tel: "",
+    staff_name: "",
+    staff_phone_number: "",
     birthday: "",
     gender: "",
     role: "",
@@ -20,7 +16,9 @@ function SignUp() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e: ChangeEvent) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -28,78 +26,60 @@ function SignUp() {
     }));
   };
 
-  const isValidTel = (tel: string) => /^\d{10}$/.test(tel); 
-  const isValidBirthday = (birthday: string) => {
-    const today = new Date();
-    const birthDate = new Date(birthday);
-    return birthDate <= today; 
+  const submitToApi = async () => {
+    try {
+      const response = await fetch("https://dinosaur.prakasitj.com/staff/addStaff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Full error response:", errorData); // Log the complete error data
+        setError(errorData.message || "Failed to add patient data.");
+        return;
+      }
+  
+      navigate("/staffListView");
+    } catch (err) {
+      setError("Error submitting data. Please try again.");
+      console.error("Request error:", err); // Log any request-related errors
+    }
   };
-  const isValidEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); 
 
-  const handleSubmit = () => {
-    const {
-      username,
-      name,
-      tel,
-      birthday,
-      gender,
-      role,
-      email,
-      password,
-      confirmPassword,
-    } = formData;
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    if (
-      !username ||
-      !name ||
-      !tel ||
-      !birthday ||
-      !gender ||
-      !role ||
-      !email ||
-      !password ||
-      !confirmPassword
-    ) {
-      setError("Please fill in all fields.");
-      return;
+    if (!validateForm()) return;
+
+    submitToApi(); // Call the function to send data to the API
+  };
+  
+  const validateForm = () => {
+    const { staff_phone_number, birthday, email} = formData;
+    const telRegex = /^\d{10}$/;
+    const isValidEmail =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+
+    if (!isValidEmail) {
+      setError("Your email is not the right pattern.");
+      return false;
     }
 
-    if (!isValidTel(tel)) {
+    if (!telRegex.test(staff_phone_number)) {
       setError("Telephone number must be 10 digits.");
-      return;
+      return false;
     }
 
-    if (!isValidBirthday(birthday)) {
-      setError("Birthday cannot be a future date.");
-      return;
+    const birthDate = new Date(birthday);
+    const today = new Date();
+    if (birthDate > today) {
+      setError("Birthday cannot be in the future.");
+      return false;
     }
 
-    if (!isValidEmail(email)) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    console.log("Form Data:", formData);
-
-    setFormData({
-      username: "",
-      name: "",
-      tel: "",
-      birthday: "",
-      gender: "",
-      role: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-    });
-    setError("");
-    navigate("/StaffListView");
+    return true;
   };
 
   return (
@@ -111,7 +91,7 @@ function SignUp() {
             <div className="flex flex-row items-center"></div>
           </div>
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="username" className="block mb-1">
                 Username:
@@ -128,14 +108,14 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="name" className="block mb-1">
+              <label htmlFor="staff_name" className="block mb-1">
                 Name:
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="staff_name"
+                name="staff_name"
+                value={formData.staff_name}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
@@ -143,14 +123,14 @@ function SignUp() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="tel" className="block mb-1">
+              <label htmlFor="staff_phone_number" className="block mb-1">
                 Telephone:
               </label>
               <input
                 type="tel"
-                id="tel"
-                name="tel"
-                value={formData.tel}
+                id="staff_phone_number"
+                name="staff_phone_number"
+                value={formData.staff_phone_number}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
@@ -256,8 +236,7 @@ function SignUp() {
             {error && <p className="text-red-500">{error}</p>}
 
             <button
-              type="button"
-              onClick={handleSubmit}
+              type="submit"
               className="absolute right-28 top-[115%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
             >
               Save

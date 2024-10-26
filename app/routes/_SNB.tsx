@@ -7,13 +7,18 @@ import { Outlet, useNavigate } from '@remix-run/react';
 
 function SideNavBar() {
   const navigate = useNavigate(); // สร้างฟังก์ชันนำทาง
+  const [currentUser, setCurrentUser] = React.useState('Guest');
+
+  React.useEffect(() => {
+    setCurrentUser(sessionStorage.getItem('currentUser') || 'Guest');
+  }, []);
 
   return (
     <div className='flex flex-row bg-[#DCE8E9]'>
       <div className="h-auto w-[17.5rem] bg-[#2F919C] text-white flex flex-col justify-between text-center rounded-r-3xl">
         {/* Title */}
         <div className="p-6">
-          <h1 className="text-2xl">Clinic Application</h1>
+          <h1 className="text-2xl">Clinic Application : {currentUser}</h1>
         </div>
 
         {/* Navigation Items */}

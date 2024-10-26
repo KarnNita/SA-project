@@ -35,7 +35,8 @@ const ListViewPatient: React.FC = () => {
           throw new Error("Failed to fetch patient data");
         }
 
-        const data = await response.json();
+        const data:Patient[]  = await response.json();
+        data.sort((a, b) => a.patient_id - b.patient_id);
         setPatientList(data);
       } catch (err) {
         setError("Failed to load data");
