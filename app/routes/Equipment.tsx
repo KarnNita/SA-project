@@ -4,8 +4,15 @@ import cottonImage from '/images/cotton.png';
 import alcoholBottleImage from '/images/alcohol_bottle.png';
 import { Link } from '@remix-run/react';
 import SideNavBar from 'app/routes/_SNB';
+import { useLoaderData, useNavigate } from "@remix-run/react";
 
-export default function Equipment() {
+const Equipment: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleHistoryClick = () => {
+    navigate("/equipmentHistory"); // เปลี่ยนเส้นทางไปยังหน้า ListViewPatient
+  };
+
   return (
     <div className="flex">
       <SideNavBar />
@@ -14,7 +21,8 @@ export default function Equipment() {
           <div style={styles.header}>
             <h2 style={styles.title}>Equipment</h2>
             <div style={styles.buttons}>
-              <button style={styles.historyButton}>
+              <button style={styles.historyButton}
+              onClick={handleHistoryClick}>
                 <div style={styles.icon}></div>Equipment history
               </button>
               <Link to="/EditEquipment">
@@ -100,7 +108,6 @@ const styles = {
   title: {
     color: '#2F919C',
     fontSize: '32px',
-    fontWeight: 'bold',
   } as React.CSSProperties,
   buttons: {
     display: 'flex',
@@ -114,7 +121,6 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     fontSize: '18px',
-    fontWeight: 'bold',
     position: 'relative' as 'relative',
   } as React.CSSProperties,
   editButton: {
@@ -125,7 +131,6 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     fontSize: '18px',
-    fontWeight: 'bold',
     position: 'relative' as 'relative',
   } as React.CSSProperties,
   icon: {
@@ -207,3 +212,5 @@ const styles = {
     boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
   } as React.CSSProperties,
 };
+
+export default Equipment;

@@ -59,19 +59,21 @@ const Home: React.FC = () => {
 
   return (
     <div className="flex flex-row w-[78svw]">
-      <div className="flex flex-row justify-center items-start w-[75svw] pt-10 pb-7">
-        <div className="p-6 border border-gray-300 h-[100svh] rounded-3xl bg-white shadow-lg w-[53svw]">
+      <div className="flex flex-row justify-center items-start h-full pt-10 pb-7">
+        <div className="p-6 border border-gray-300 h-full rounded-3xl bg-white shadow-lg w-[70svw] ml-20">
           <div className="flex flex-row">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-4 ml-2 mt-2">
               <h1 className="text-[#1FA1AF] text-2xl">Today's Patient List</h1>
             </div>
-            <div className="flex flexrow">
-              <div className="bg-[#DCE8E9] w-7 h-7 ml-[26svw] rounded-full">
+            <div className="flex flexrow" onClick={handleSeeAllClick}
+                style={{cursor: "pointer"}}>
+              <div className="bg-[#DCE8E9] w-7 h-7 ml-[43svw] mt-2 rounded-full">
                 <CiUser className="ml-1 mt-1 text-[#1FA1AF]" size={20} />
               </div>
               <h1
-                className="text-[#1FA1AF] ml-2 mt-[0.1rem]"
+                className="text-[#1FA1AF] ml-2 mt-2"
                 onClick={handleSeeAllClick}
+                style={{cursor: "pointer"}}
               >
                 See All Patient
               </h1>
@@ -79,8 +81,8 @@ const Home: React.FC = () => {
           </div>
 
           <div
-            className="mt-6 bg-[#DCE8E9] rounded-2xl"
-            style={{ maxHeight: "80vh", overflowY: "auto" }}
+            className="mt-4 bg-[#DCE8E9] rounded-2xl h-[120lvh]"
+            style={{overflowY: "auto" }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>

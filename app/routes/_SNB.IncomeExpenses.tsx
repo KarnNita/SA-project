@@ -61,8 +61,8 @@ function IncomeExpenses() {
     <div className="flex flex-row bg-[#DCE8E9] overflow-hidden">
       <div
         className="flex flex-col flex-grow bg-white 
-                    mr-[40px] ml-[40px] mt-[25px] mb-[25px]
-                    rounded-[60px] border border-gray-300 h-[calc(svh-10px)] w-[75svw]
+                    mr-[40px] ml-[100px] mt-[25px] mb-[25px]
+                    rounded-[60px] border border-gray-300 h-[calc(svh-10px)] w-[65svw]
                     shadow-[0px_4px_4px_rgba(0,0,0,0.25)]"
       >
         <div className="flex justify-between items-center p-16">
@@ -97,7 +97,7 @@ function IncomeExpenses() {
 
         <div
           className="flex flex-col flex-grow bg-[#DCE8E9] 
-                                mx-auto mt-[25px] mb-[25px] w-[118svh]
+                                mx-auto mt-[50px] mb-[25px] w-[60svw]
                                 rounded-3xl border border-gray-300  overflowY: auto"
         >
           <table>

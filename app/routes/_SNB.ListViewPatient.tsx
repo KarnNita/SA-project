@@ -35,7 +35,7 @@ const ListViewPatient: React.FC = () => {
           throw new Error("Failed to fetch patient data");
         }
 
-        const data:Patient[]  = await response.json();
+        const data: Patient[] = await response.json();
         data.sort((a, b) => a.patient_id - b.patient_id);
         setPatientList(data);
       } catch (err) {
@@ -55,7 +55,7 @@ const ListViewPatient: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleEditPatient = () => {
+  const handlePatientDetail = () => {
     navigate("/PatientDetail"); // นำทางไปยังหน้า PatientDetail
   };
 
@@ -191,9 +191,14 @@ const ListViewPatient: React.FC = () => {
                 <th style={thTdStyle}></th>
               </tr>
             </thead>
+            
             <tbody>
               {filteredPatients.map((patient: Patient, index: number) => (
-                <tr key={index} style={{ borderBottom: "1px solid white" }}>
+                <tr
+                  key={index}
+                  style={{ borderBottom: "1px solid white", cursor: "pointer"}}
+                  onClick={handlePatientDetail}
+                >
                   <td style={thTdStyle}>{patient.patient_id}</td>
                   <td style={thTdStyle}>{patient.name_surname}</td>
                   <td style={thTdStyle}>{patient.phone_number}</td>

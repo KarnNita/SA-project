@@ -4,6 +4,7 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import { FaUser, FaWrench } from 'react-icons/fa';
 import { RiExchange2Fill } from "react-icons/ri";
 import { Outlet, useNavigate } from '@remix-run/react';
+import { FaClipboardList } from "react-icons/fa";
 
 function SideNavBar() {
   const navigate = useNavigate(); // สร้างฟังก์ชันนำทาง
@@ -62,6 +63,14 @@ function SideNavBar() {
                 <FaWrench size={20} className="mb-2" />
                 <button onClick={() => navigate("/equipment")} className="text-lg block">
                   Equipment
+                </button>
+              </div>
+            </li>
+            <li className="flex flex-col items-center">
+              <div className="bg-[#2F919C] text-white w-36 h-24 rounded-3xl flex flex-col items-center justify-center transition">
+                <FaClipboardList size={23} className="mb-2"/>
+                <button onClick={() => navigate("/medicalRecord")} className="text-lg block">
+                  Medical Record
                 </button>
               </div>
             </li>

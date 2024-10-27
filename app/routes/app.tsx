@@ -8,6 +8,8 @@ import StaffListView from './StaffListView';
 import Equipment from './Equipment';
 import IncomeExpenses from './_SNB.IncomeExpenses';
 import ListViewPatient from './_SNB.ListViewPatient';
+import MedicalRecord from './MedicalRecord';
+import EquipmentHistory from './_SNB.EquipmentHistory';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/equipment" element={<Equipment />} />
         <Route path="/incomeExpenses" element={<IncomeExpenses />} />
         <Route path="/listViewPatient" element={<ListViewPatient/>}/>
+        <Route path="/medicalRecord" element={<MedicalRecord/>}/>
+        <Route path="/equimentHistory" element={<EquipmentHistory />} />
       </Routes>
     </Router>
   );
