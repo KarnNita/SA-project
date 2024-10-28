@@ -1,17 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import needleImage from '/images/needle.png';
 import cottonImage from '/images/cotton.png';
-import alcoholBottleImage from '/images/alcohol_bottle.png';
 import { Link } from '@remix-run/react';
 import SideNavBar from 'app/routes/_SNB';
-import { useLoaderData, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
+
+interface EquipmentItem {
+  equipment_id: number;
+  equipment_name: string;
+  amount: number;
+}
 
 const Equipment: React.FC = () => {
   const navigate = useNavigate();
+  const [equipmentItems, setEquipmentItems] = useState<EquipmentItem[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleHistoryClick = () => {
-    navigate("/equipmentHistory"); // เปลี่ยนเส้นทางไปยังหน้า ListViewPatient
+    navigate("/equipmentHistory");
   };
+
+  useEffect(() => {
+    const fetchEquipment = async () => {
+      try {
+        const response = await fetch("https://dinosaur.prakasitj.com/equipment/getEquipmentNameAmount");
+        if (!response.ok) throw new Error("Failed to fetch equipment data");
+
+        const data: EquipmentItem[] = await response.json();
+        setEquipmentItems(data);
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEquipment();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex">
@@ -21,8 +51,7 @@ const Equipment: React.FC = () => {
           <div style={styles.header}>
             <h2 style={styles.title}>Equipment</h2>
             <div style={styles.buttons}>
-              <button style={styles.historyButton}
-              onClick={handleHistoryClick}>
+              <button style={styles.historyButton} onClick={handleHistoryClick}>
                 <div style={styles.icon}></div>Equipment history
               </button>
               <Link to="/EditEquipment">
@@ -34,18 +63,18 @@ const Equipment: React.FC = () => {
           </div>
           <div style={styles.equipmentCard}>
             {equipmentItems.map((item) => (
-              <div key={item.name} style={styles.equipmentItem}>
+              <div key={item.equipment_id} style={styles.equipmentItem}>
                 <div style={styles.imageContainer}>
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={getImageForEquipment(item.equipment_name)}
+                    alt={item.equipment_name}
                     style={styles.itemImage}
                   />
                 </div>
                 <div style={styles.details}>
-                  <h3 style={styles.itemName}>{item.name}</h3>
+                  <h3 style={styles.itemName}>{item.equipment_name}</h3>
                   <div style={styles.remainingWrapper}>
-                    <p style={styles.remainingText}>Remaining: {item.remaining}</p>
+                    <p style={styles.remainingText}>Remaining: {item.amount}</p>
                   </div>
                 </div>
                 <Link to="/EditEquipment">
@@ -58,25 +87,25 @@ const Equipment: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
-const equipmentItems = [
-  {
-    name: 'Needle',
-    image: needleImage,
-    remaining: 10,
-  },
-  {
-    name: 'Cotton',
-    image: cottonImage,
-    remaining: 15,
-  },
-  {
-    name: 'Alcohol Bottle',
-    image: alcoholBottleImage,
-    remaining: 5,
-  },
-];
+const getImageForEquipment = (name: string) => {
+  const imagePath = (() => {
+    switch (name.toLowerCase()) {
+      case 'needle size 1':
+      case 'needle size 2':
+        return needleImage;
+      case 'cotton':
+        return cottonImage;
+      default:
+        return ''; 
+    }
+  })();
+  console.log(`Image path for ${name}:`, imagePath);
+  return imagePath;
+};
+
+
 
 const styles = {
   container: {
