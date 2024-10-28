@@ -2,7 +2,6 @@ import { CiUser } from "react-icons/ci";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
 import { format } from "date-fns";
-import moment from "moment";
 
 interface Patient {
   patient_id: number;
@@ -116,9 +115,7 @@ const Home: React.FC = () => {
                     <td style={thTdStyle}>
                       <td style={thTdStyle}>
                         {patient.appoinment_date
-                          ? moment(patient.appoinment_date).format(
-                              "YYYY/MM/DD HH:mm:ss"
-                            )
+                          ? patient.appoinment_date
                           : "N/A"}
                       </td>
                     </td>
