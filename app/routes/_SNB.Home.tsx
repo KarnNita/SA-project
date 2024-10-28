@@ -1,7 +1,7 @@
 import { CiUser } from "react-icons/ci";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import moment from "moment";
 
 interface Patient {
@@ -32,10 +32,9 @@ const Home: React.FC = () => {
           throw new Error("Failed to fetch patient data");
         }
 
-        const data:Patient[]  = await response.json();
+        const data: Patient[] = await response.json();
         data.sort((a, b) => a.patient_id - b.patient_id);
         setPatientList(data);
-        
       } catch (err) {
         setError("Failed to load data");
         console.error(err);
@@ -69,15 +68,18 @@ const Home: React.FC = () => {
             <div className="flex justify-between items-center mb-4 ml-2 mt-2">
               <h1 className="text-[#1FA1AF] text-2xl">Today's Patient List</h1>
             </div>
-            <div className="flex flexrow" onClick={handleSeeAllClick}
-                style={{cursor: "pointer"}}>
+            <div
+              className="flex flexrow"
+              onClick={handleSeeAllClick}
+              style={{ cursor: "pointer" }}
+            >
               <div className="bg-[#DCE8E9] w-7 h-7 ml-[43svw] mt-2 rounded-full">
                 <CiUser className="ml-1 mt-1 text-[#1FA1AF]" size={20} />
               </div>
               <h1
                 className="text-[#1FA1AF] ml-2 mt-2"
                 onClick={handleSeeAllClick}
-                style={{cursor: "pointer"}}
+                style={{ cursor: "pointer" }}
               >
                 See All Patient
               </h1>
@@ -86,14 +88,14 @@ const Home: React.FC = () => {
 
           <div
             className="mt-4 bg-[#DCE8E9] rounded-2xl h-[120lvh]"
-            style={{overflowY: "auto" }}
+            style={{ overflowY: "auto" }}
           >
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
                   <th style={thTdStyle}>Patient ID</th>
-                  <th style={thTdStyle}>Name</th>
-                  <th style={thTdStyle}>Tel</th>
+                  <th style={thTdStyle}>Name Surname</th>
+                  <th style={thTdStyle}>Phone Number</th>
                   <th style={thTdStyle}>Birth Day</th>
                   <th style={thTdStyle}>Gender</th>
                   <th style={thTdStyle}>Appointment Date</th>
@@ -105,18 +107,22 @@ const Home: React.FC = () => {
                 {filteredPatients.map((patient: Patient, index: number) => (
                   <tr key={index} style={{ borderBottom: "1px solid white" }}>
                     <td style={thTdStyle}>{patient.patient_id}</td>
-                  <td style={thTdStyle}>
-                      {patient.name_surname}
-                  </td>
-                  <td style={thTdStyle}>{patient.phone_number}</td>
-                  <td style={thTdStyle}>
-                    {format(patient.birthday, 'dd-MM-yyyy')}
-                  </td>
-                  <td style={thTdStyle}>{patient.gender}</td>
-                  <td style={thTdStyle}>
-                    {format(patient.appoinment_date, 'yyyy/MM/dd kk:mm:ss')}
-                  </td>
-                  <td style={thTdStyle}>{patient.course_count}</td>
+                    <td style={thTdStyle}>{patient.name_surname}</td>
+                    <td style={thTdStyle}>{patient.phone_number}</td>
+                    <td style={thTdStyle}>
+                      {format(patient.birthday, "dd-MM-yyyy")}
+                    </td>
+                    <td style={thTdStyle}>{patient.gender}</td>
+                    <td style={thTdStyle}>
+                      <td style={thTdStyle}>
+                        {patient.appoinment_date
+                          ? moment(patient.appoinment_date).format(
+                              "YYYY/MM/DD HH:mm:ss"
+                            )
+                          : "N/A"}
+                      </td>
+                    </td>
+                    <td style={thTdStyle}>{patient.course_count}</td>
                   </tr>
                 ))}
               </tbody>
@@ -126,7 +132,7 @@ const Home: React.FC = () => {
       </div>
     </div>
   );
-}
+};
 
 const thTdStyle: React.CSSProperties = {
   padding: "12px",

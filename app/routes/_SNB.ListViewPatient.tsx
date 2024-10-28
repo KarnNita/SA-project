@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
-import { useLoaderData, useNavigate } from "@remix-run/react";
+import { useNavigate } from "@remix-run/react";
 
 interface Patient {
   patient_id: number;
@@ -12,24 +12,18 @@ interface Patient {
   appoinment_date: string;
   course_count: number;
 }
-// export async function loader() {
-
-//     return await fetch("https://dinosaur.prakasitj.com/patient/getPatientList");
-
-//   }
 
 const ListViewPatient: React.FC = () => {
   const navigate = useNavigate();
   const [patientList, setPatientList] = useState<Patient[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://dinosaur.prakasitj.com/patient/getPatientList"
-        );
+        const response = await fetch("https://dinosaur.prakasitj.com/patient/getPatientList");
 
         if (!response.ok) {
           throw new Error("Failed to fetch patient data");
@@ -47,30 +41,28 @@ const ListViewPatient: React.FC = () => {
     };
 
     fetchData();
-  }, []); // Empty dependency array to fetch data on mount
-
-  const [searchTerm, setSearchTerm] = React.useState<string>("");
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
   const handlePatientDetail = () => {
-    navigate("/PatientDetail"); // นำทางไปยังหน้า PatientDetail
+    navigate("/PatientDetail");
   };
 
   const handleSelectTreatment = () => {
-    navigate("/treatmentSelect"); // นำทางไปยังหน้า TreatmentSelect
+    navigate("/treatmentSelect");
   };
 
   const handleAddNewPatient = () => {
-    navigate("/AddNewPatient"); // นำทางไปยังหน้า AddNewPatient
+    navigate("/AddNewPatient");
   };
 
-  const filteredPatients = patientList.filter(
-    (patient: Patient) =>
-      // patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-      patient
+  const filteredPatients = patientList.filter((patient) =>
+    patient.name_surname.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    patient.phone_number.includes(searchTerm) ||
+    patient.patient_id.toString().includes(searchTerm)
   );
 
   if (loading) return <p>Loading...</p>;
@@ -117,7 +109,7 @@ const ListViewPatient: React.FC = () => {
               alignItems: "center",
               cursor: "pointer",
             }}
-            onClick={handleAddNewPatient} // เรียกใช้ฟังก์ชันเมื่อคลิก
+            onClick={handleAddNewPatient}
           >
             <span
               style={{
@@ -173,17 +165,16 @@ const ListViewPatient: React.FC = () => {
             backgroundColor: "#DCE8E9",
             borderRadius: "10px",
             padding: "20px",
-            height: "100%", // Set this to control height of the container
-            maxHeight: "650px", // Set a fixed max height for scrollable area
-            overflowY: "auto", // Enables scrolling when content overflows vertically
+            maxHeight: "650px",
+            overflowY: "auto",
           }}
         >
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr>
                 <th style={thTdStyle}>Patient ID</th>
-                <th style={thTdStyle}>Name</th>
-                <th style={thTdStyle}>Tel</th>
+                <th style={thTdStyle}>Name Surname</th>
+                <th style={thTdStyle}>Phone Number</th>
                 <th style={thTdStyle}>Birth Day</th>
                 <th style={thTdStyle}>Gender</th>
                 <th style={thTdStyle}>Appointment Date</th>
@@ -193,21 +184,21 @@ const ListViewPatient: React.FC = () => {
             </thead>
             
             <tbody>
-              {filteredPatients.map((patient: Patient, index: number) => (
+              {filteredPatients.map((patient, index) => (
                 <tr
                   key={index}
-                  style={{ borderBottom: "1px solid white", cursor: "pointer"}}
+                  style={{ borderBottom: "1px solid white", cursor: "pointer" }}
                   onClick={handlePatientDetail}
                 >
                   <td style={thTdStyle}>{patient.patient_id}</td>
                   <td style={thTdStyle}>{patient.name_surname}</td>
                   <td style={thTdStyle}>{patient.phone_number}</td>
                   <td style={thTdStyle}>
-                    {new Date(patient.birthday).toString()}
+                    {new Date(patient.birthday).toLocaleDateString()}
                   </td>
                   <td style={thTdStyle}>{patient.gender}</td>
                   <td style={thTdStyle}>
-                    {new Date(patient.appoinment_date).toString()}
+                    {new Date(patient.appoinment_date).toLocaleString()}
                   </td>
                   <td style={thTdStyle}>{patient.course_count}</td>
                   <td style={thTdStyle}>
