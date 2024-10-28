@@ -175,7 +175,7 @@ const ListViewPatient: React.FC = () => {
                 <th style={thTdStyle}>Patient ID</th>
                 <th style={thTdStyle}>Name Surname</th>
                 <th style={thTdStyle}>Phone Number</th>
-                <th style={thTdStyle}>Birth Day</th>
+                <th style={thTdStyle}>Birthday</th>
                 <th style={thTdStyle}>Gender</th>
                 <th style={thTdStyle}>Appointment Date</th>
                 <th style={thTdStyle}>Course</th>
@@ -188,19 +188,18 @@ const ListViewPatient: React.FC = () => {
                 <tr
                   key={index}
                   style={{ borderBottom: "1px solid white", cursor: "pointer" }}
-                  onClick={handlePatientDetail}
                 >
-                  <td style={thTdStyle}>{patient.patient_id}</td>
-                  <td style={thTdStyle}>{patient.name_surname}</td>
-                  <td style={thTdStyle}>{patient.phone_number}</td>
-                  <td style={thTdStyle}>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.patient_id}</td>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.name_surname}</td>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.phone_number}</td>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>
                     {new Date(patient.birthday).toLocaleDateString()}
                   </td>
-                  <td style={thTdStyle}>{patient.gender}</td>
-                  <td style={thTdStyle}>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.gender}</td>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>
                     {new Date(patient.appoinment_date).toLocaleString()}
                   </td>
-                  <td style={thTdStyle}>{patient.course_count}</td>
+                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.course_count}</td>
                   <td style={thTdStyle}>
                     <button
                       style={{

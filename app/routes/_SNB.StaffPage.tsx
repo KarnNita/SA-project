@@ -25,20 +25,19 @@ function StaffPage() {
       const storedStaff = sessionStorage.getItem("currentStaff");
       const currentStaffValue = storedStaff ? storedStaff.replace(/^"|"$/g, '') : "Guest";
       setCurrentStaff(currentStaffValue);
-  
-      // Check if we need to display an error
+
       if (currentStaffValue === "Guest") {
         setError("No username found in session.");
         setLoading(false);
         return;
       }
-  
+
       try {
         const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentStaffValue}`);
         if (!response.ok) {
           throw new Error("Failed to fetch staff data");
         }
-  
+
         const data = await response.json();
         console.log(data);
         if (data.length > 0) {
@@ -53,7 +52,7 @@ function StaffPage() {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -76,8 +75,8 @@ function StaffPage() {
           ) : (
             <>
               <OutputBox title="Username:" output={staffData?.username || ""} />
-              <OutputBox title="Name:" output={staffData?.staff_name || ""} />
-              <OutputBox title="Tel:" output={staffData?.staff_phone_number || ""} />
+              <OutputBox title="Name Surname:" output={staffData?.staff_name || ""} />
+              <OutputBox title="Phone Number:" output={staffData?.staff_phone_number || ""} />
               <OutputBox title="Age:" output={staffData ? calculateAge(staffData.birthday) : ""} />
               <OutputBox title="Gender:" output={staffData?.gender || ""} />
               <OutputBox title="Role:" output={staffData?.role || ""} />

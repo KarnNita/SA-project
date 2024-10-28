@@ -17,19 +17,17 @@ interface Staff {
 }
 
 const StaffListView: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://dinosaur.prakasitj.com/staff/getStaffList"
-        );
+        const response = await fetch("https://dinosaur.prakasitj.com/staff/getStaffList");
 
         if (!response.ok) {
           throw new Error("Failed to fetch staff data");
@@ -52,26 +50,27 @@ const StaffListView: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
+  const filteredStaff = staffList.filter(
+    (staff) =>
+      staff.staff_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      staff.staff_phone_number.includes(searchTerm) ||
+      staff.staff_id.toString().includes(searchTerm) ||
+      staff.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const handleEditStaff = (username: string) => {
-    // Store the selected staff's username in sessionStorage
     sessionStorage.setItem("currentStaff", JSON.stringify(username));
-    navigate("/editStaff"); // Navigate to the EditStaff page
+    navigate("/editStaff");
   };
 
   const handleAddNewStaff = () => {
-    navigate("/StaffSignUp"); // เปลี่ยนเส้นทางไปยังหน้า Staff Sign Up
+    navigate("/StaffSignUp");
   };
 
   const handleClickList = (currentStaff: string) => {
     sessionStorage.setItem("currentStaff", JSON.stringify(currentStaff));
     navigate("/staffPage");
   };
-
-  const filteredStaff = staffList.filter(
-    (staff) =>
-      // staff.name.toLowerCase().includes(searchTerm.toLowerCase())
-      staff
-  );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -80,21 +79,14 @@ const StaffListView: React.FC = () => {
     <div className="flex">
       <SideNavBar />
       <div className="page-background" style={mainContentStyle}>
-        <div
-          className="staff-list-view-container"
-          style={staffListViewContainerStyle}
-        >
+        <div className="staff-list-view-container" style={staffListViewContainerStyle}>
           <div className="header" style={headerStyle}>
-            <h2 style={{ fontSize: "28px", color: "#2F919C" }}>
-              Staff List View
-            </h2>
+            <h2 style={{ fontSize: "28px", color: "#2F919C" }}>Staff List View</h2>
             <div style={addNewStaffButtonStyle} onClick={handleAddNewStaff}>
               <div style={iconContainerStyle}>
                 <FontAwesomeIcon icon={faUserPlus} style={{ color: "#000" }} />
               </div>
-              <span style={{ color: "#000000", fontSize: "16px" }}>
-                Add new Staff
-              </span>
+              <span style={{ color: "#000000", fontSize: "16px" }}>Add new Staff</span>
             </div>
           </div>
 
@@ -123,53 +115,18 @@ const StaffListView: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredStaff.map((staff, index) => (
-                  <tr key={index} style={{ borderBottom: "1px solid white" }}>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.username}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.staff_name}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.staff_phone_number}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {format(staff.birthday, 'dd-MM-yyyy')}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.gender}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.role}
-                    </td>
-                    <td
-                      style={thTdStyle}
-                      onClick={() => handleClickList(staff.username)}
-                    >
-                      {staff.email}
-                    </td>
+                {filteredStaff.map((staff) => (
+                  <tr key={staff.staff_id} style={{ borderBottom: "1px solid white" }}>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.username}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_name}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_phone_number}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{format(new Date(staff.birthday), 'dd-MM-yyyy')}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.gender}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.role}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.email}</td>
                     <td style={thTdStyle}>
                       <a
-                        onClick={() => handleEditStaff(staff.username)} // Pass username to handleEditStaff
+                        onClick={() => handleEditStaff(staff.username)}
                         style={{
                           color: "#2F919C",
                           cursor: "pointer",
@@ -190,7 +147,7 @@ const StaffListView: React.FC = () => {
   );
 };
 
-// สไตล์ของคอมโพเนนต์
+// Component styles
 const mainContentStyle: React.CSSProperties = {
   backgroundColor: "#DCE8E9",
   width: "100%",
