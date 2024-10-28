@@ -10,6 +10,8 @@ import IncomeExpenses from './_SNB.IncomeExpenses';
 import ListViewPatient from './_SNB.ListViewPatient';
 import MedicalRecord from './MedicalRecord';
 import EquipmentHistory from './_SNB.EquipmentHistory';
+import StaffPage from './_SNB.StaffPage';
+import EditStaff from './_SNB.EditStaff';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/listViewPatient" element={<ListViewPatient/>}/>
         <Route path="/medicalRecord" element={<MedicalRecord/>}/>
         <Route path="/equimentHistory" element={<EquipmentHistory />} />
+        <Route path="/staffPage" element={<StaffPage />} />
+        <Route path="/editStaff" element={<EditStaff />} />
       </Routes>
     </Router>
   );

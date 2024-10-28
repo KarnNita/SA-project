@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent} from "react";
 import { useNavigate } from "@remix-run/react";
 
 function SignUp() {

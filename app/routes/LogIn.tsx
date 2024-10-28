@@ -1,33 +1,45 @@
 import { useState } from "react";
 import { useNavigate } from "@remix-run/react";
 
-
 function LogIn() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
-  const handleSubmit = (e:any ) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     if (!username || !password) {
       setError("Please fill in all fields.");
       return;
     }
-
-    console.log("Username", username);
-    console.log("Password", password);
-
-    // Clear the form
-    setUsername("");
-    setPassword("");
-    setError("");
-    sessionStorage.setItem('currentUser', username);
-
-    navigate('/home')
-  };
+  
+    try {
+      const response = await fetch(`https://dinosaur.prakasitj.com/staff/login/${username}/${password}`);
+  
+      if (!response.ok) {
+        throw new Error("Invalid username or password");
+      }
+  
+      const data = await response.json();
+      console.log("Full response data:", data);  // Log to check the structure
+  
+      // Check if data is an array and access the first element
+      if (Array.isArray(data) && data[0]?.staff_id) {
+        // Login successful: save user to session storage and navigate to home
+        sessionStorage.setItem("currentUser", username);
+        navigate("/home");
+      } else {
+        // Login failed: display error message
+        setError("Invalid username or password.");
+      }
+    } catch (err) {
+      setError("Failed to login. Please try again.");
+      console.error(err);
+    }
+  };  
 
   return (
     <div className="flex justify-center items-center w-[90vw] h-[90vh] bg-gray-100 shadow-lg rounded-lg absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -36,7 +48,7 @@ function LogIn() {
           <div className="text-center mb-10">
             <h1 className="text-black font-bold text-3xl mb-2">CLINIC</h1>
             <div className="w-full h-0.5 bg-black mb-2"></div>
-            <h3>Something for decoration</h3>
+            <h3>Chinese Medical Clinic</h3>
           </div>
           <div>
             <div className="mb-4">
@@ -61,7 +73,6 @@ function LogIn() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onClick={()=>console.log('fs')}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />

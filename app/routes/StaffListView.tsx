@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
-import SideNavBar from 'app/routes/_SNB';
-import { useNavigate } from '@remix-run/react';
+import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
+import SideNavBar from "app/routes/_SNB";
+import { useNavigate } from "@remix-run/react";
+import { format } from 'date-fns';
 
 interface Staff {
   staff_id: number;
@@ -16,7 +17,7 @@ interface Staff {
 }
 
 const StaffListView: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [staffList, setStaffList] = useState<Staff[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,9 @@ const StaffListView: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("https://dinosaur.prakasitj.com/staff/getStaffList");
+        const response = await fetch(
+          "https://dinosaur.prakasitj.com/staff/getStaffList"
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch staff data");
@@ -50,16 +53,24 @@ const StaffListView: React.FC = () => {
   };
 
   const handleEditStaff = (username: string) => {
-    console.log(`Edit staff with username: ${username}`);
+    // Store the selected staff's username in sessionStorage
+    sessionStorage.setItem("currentStaff", JSON.stringify(username));
+    navigate("/editStaff"); // Navigate to the EditStaff page
   };
 
   const handleAddNewStaff = () => {
-    navigate('/StaffSignUp'); // เปลี่ยนเส้นทางไปยังหน้า Staff Sign Up
+    navigate("/StaffSignUp"); // เปลี่ยนเส้นทางไปยังหน้า Staff Sign Up
   };
 
-  const filteredStaff = staffList.filter(staff =>
-    // staff.name.toLowerCase().includes(searchTerm.toLowerCase())
-    staff
+  const handleClickList = (currentStaff: string) => {
+    sessionStorage.setItem("currentStaff", JSON.stringify(currentStaff));
+    navigate("/staffPage");
+  };
+
+  const filteredStaff = staffList.filter(
+    (staff) =>
+      // staff.name.toLowerCase().includes(searchTerm.toLowerCase())
+      staff
   );
 
   if (loading) return <p>Loading...</p>;
@@ -69,14 +80,21 @@ const StaffListView: React.FC = () => {
     <div className="flex">
       <SideNavBar />
       <div className="page-background" style={mainContentStyle}>
-        <div className="staff-list-view-container" style={staffListViewContainerStyle}>
+        <div
+          className="staff-list-view-container"
+          style={staffListViewContainerStyle}
+        >
           <div className="header" style={headerStyle}>
-            <h2 style={{ fontSize: '28px', color: '#2F919C' }}>Staff List View</h2>
+            <h2 style={{ fontSize: "28px", color: "#2F919C" }}>
+              Staff List View
+            </h2>
             <div style={addNewStaffButtonStyle} onClick={handleAddNewStaff}>
               <div style={iconContainerStyle}>
-                <FontAwesomeIcon icon={faUserPlus} style={{ color: '#000' }} />
+                <FontAwesomeIcon icon={faUserPlus} style={{ color: "#000" }} />
               </div>
-              <span style={{ color: '#000000', fontSize: '16px' }}>Add new Staff</span>
+              <span style={{ color: "#000000", fontSize: "16px" }}>
+                Add new Staff
+              </span>
             </div>
           </div>
 
@@ -91,7 +109,7 @@ const StaffListView: React.FC = () => {
           </div>
 
           <div className="staff-list" style={staffListStyle}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
                   <th style={thTdStyle}>Username</th>
@@ -106,19 +124,57 @@ const StaffListView: React.FC = () => {
               </thead>
               <tbody>
                 {filteredStaff.map((staff, index) => (
-                  <tr key={index} style={{ borderBottom: '1px solid white' }}>
-                    <td style={thTdStyle}>{staff.username}</td>
-                    <td style={thTdStyle}>{staff.staff_name}</td>
-                    <td style={thTdStyle}>{staff.staff_phone_number}</td>
-                    <td style={thTdStyle}>{staff.birthday}</td>
-                    <td style={thTdStyle}>{staff.gender}</td>
-                    <td style={thTdStyle}>{staff.role}</td>
-                    <td style={thTdStyle}>{staff.email}</td>
+                  <tr key={index} style={{ borderBottom: "1px solid white" }}>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.username}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.staff_name}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.staff_phone_number}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {format(staff.birthday, 'dd-MM-yyyy')}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.gender}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.role}
+                    </td>
+                    <td
+                      style={thTdStyle}
+                      onClick={() => handleClickList(staff.username)}
+                    >
+                      {staff.email}
+                    </td>
                     <td style={thTdStyle}>
                       <a
-                        href="#"
-                        onClick={() => handleEditStaff(staff.username)}
-                        style={{ color: '#2F919C', cursor: 'pointer', textDecoration: 'underline' }}
+                        onClick={() => handleEditStaff(staff.username)} // Pass username to handleEditStaff
+                        style={{
+                          color: "#2F919C",
+                          cursor: "pointer",
+                          textDecoration: "underline",
+                        }}
                       >
                         Edit
                       </a>
@@ -136,69 +192,69 @@ const StaffListView: React.FC = () => {
 
 // สไตล์ของคอมโพเนนต์
 const mainContentStyle: React.CSSProperties = {
-  backgroundColor: '#DCE8E9',
-  width: '100%',
-  minHeight: '100vh',
-  padding: '50px',
-  boxSizing: 'border-box',
+  backgroundColor: "#DCE8E9",
+  width: "100%",
+  minHeight: "100vh",
+  padding: "50px",
+  boxSizing: "border-box",
 };
 
 const staffListViewContainerStyle: React.CSSProperties = {
-  width: '1116px',
-  height: '968px',
-  padding: '20px',
-  backgroundColor: '#ffffff',
-  borderRadius: '50px 5px 5px 50px',
-  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-  margin: 'auto',
+  width: "1116px",
+  height: "968px",
+  padding: "20px",
+  backgroundColor: "#ffffff",
+  borderRadius: "50px 5px 5px 50px",
+  boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+  margin: "auto",
 };
 
 const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '20px',
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  marginBottom: "20px",
 };
 
 const addNewStaffButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  cursor: 'pointer',
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
+  cursor: "pointer",
 };
 
 const iconContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  padding: '10px',
-  borderRadius: '50%',
-  backgroundColor: '#f0c040',
+  display: "flex",
+  alignItems: "center",
+  padding: "10px",
+  borderRadius: "50%",
+  backgroundColor: "#f0c040",
 };
 
 const searchBarStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'flex-end',
-  marginBottom: '20px',
+  display: "flex",
+  justifyContent: "flex-end",
+  marginBottom: "20px",
 };
 
 const searchInputStyle: React.CSSProperties = {
-  width: '300px',
-  padding: '10px',
-  borderRadius: '20px',
-  border: '1px solid #ccc',
-  fontSize: '16px',
+  width: "300px",
+  padding: "10px",
+  borderRadius: "20px",
+  border: "1px solid #ccc",
+  fontSize: "16px",
 };
 
 const staffListStyle: React.CSSProperties = {
-  backgroundColor: '#DCE8E9',
-  borderRadius: '10px',
-  padding: '20px',
-  height: '731px',
+  backgroundColor: "#DCE8E9",
+  borderRadius: "10px",
+  padding: "20px",
+  height: "731px",
 };
 
 const thTdStyle: React.CSSProperties = {
-  padding: '12px',
-  textAlign: 'left',
+  padding: "12px",
+  textAlign: "left",
 };
 
 export default StaffListView;

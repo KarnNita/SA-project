@@ -61,16 +61,19 @@ function EquipmentHistory() {
 
     return data.map((record) => (
       <tr key={activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).stock_in_id} className="border-b">
-        <td className="pl-24 py-2" style={{ borderBottom: "1px solid white" }}>
+        <td className="pl-[5rem] py-2" style={{ borderBottom: "1px solid white" }}>
           {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).stock_in_id}
         </td>
-        <td className="pl-14 py-2" style={{ borderBottom: "1px solid white" }}>
+        <td className="pl-16 py-2" style={{ borderBottom: "1px solid white" }}>
+          {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).equipment_id}
+        </td>
+        <td className="pl-7 py-2" style={{ borderBottom: "1px solid white" }}>
           {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_date : (record as EquipmentStock).stock_in_date}
         </td>
-        <td className="pl-9 py-2" style={{ borderBottom: "1px solid white" }}>
+        <td className="pl-6 py-2" style={{ borderBottom: "1px solid white" }}>
           {activeTab === "Use Equipment" ? "Use Equipment" : "Import Equipment"}
         </td>
-        <td className="pl-[3.75rem] py-2" style={{ borderBottom: "1px solid white" }}>
+        <td className="pl-8 py-2" style={{ borderBottom: "1px solid white" }}>
           {activeTab === "Use Equipment" ? (record as EquipmentRequisition).use_amount : (record as EquipmentStock).amount}
         </td>
         <td className="pl-[4rem] py-2" style={{ borderBottom: "1px solid white" }}>
@@ -114,9 +117,10 @@ function EquipmentHistory() {
             <thead>
               <tr>
                 <th className="pl-2 py-2">Equipment Record ID</th>
-                <th className="pl-1 py-2">Record Date</th>
-                <th className="px-8 py-2">Type</th>
-                <th className="px-8 py-2">Amount</th>
+                <th className="pl-4 py-2">Equipment ID</th>
+                <th className="py-2">Record Date</th>
+                <th className="py-2">Type</th>
+                <th className="py-2">Amount</th>
                 <th className="px-8 py-2">Staff ID</th>
               </tr>
             </thead>

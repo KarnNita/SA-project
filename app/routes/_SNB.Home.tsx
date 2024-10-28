@@ -1,6 +1,8 @@
 import { CiUser } from "react-icons/ci";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import React, { useEffect, useState } from "react";
+import { format } from 'date-fns';
+import moment from "moment";
 
 interface Patient {
   patient_id: number;
@@ -17,7 +19,8 @@ const Home: React.FC = () => {
   const [patientList, setPatientList] = useState<Patient[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
- 
+  const [formattedDate, setFormattedDate] = useState<Patient[]>([]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -32,6 +35,7 @@ const Home: React.FC = () => {
         const data:Patient[]  = await response.json();
         data.sort((a, b) => a.patient_id - b.patient_id);
         setPatientList(data);
+        
       } catch (err) {
         setError("Failed to load data");
         console.error(err);
@@ -106,11 +110,11 @@ const Home: React.FC = () => {
                   </td>
                   <td style={thTdStyle}>{patient.phone_number}</td>
                   <td style={thTdStyle}>
-                    {new Date(patient.birthday).toString()}
+                    {format(patient.birthday, 'dd-MM-yyyy')}
                   </td>
                   <td style={thTdStyle}>{patient.gender}</td>
                   <td style={thTdStyle}>
-                    {new Date(patient.appoinment_date).toString()}
+                    {format(patient.appoinment_date, 'yyyy/MM/dd kk:mm:ss')}
                   </td>
                   <td style={thTdStyle}>{patient.course_count}</td>
                   </tr>
@@ -120,38 +124,6 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function DateHeader() {
-  return (
-    <div className="flex flex-row gap-3 justify-start items-center">
-      <div
-        className="w-[0.625rem] h-[4.25rem] bg-[#2F919C] rounded-3xl"
-        style={{ filter: "drop-shadow(0 0.25rem 0.125rem #C3C3C3)" }}
-      ></div>
-
-      <div className="flex flex-col">
-        <span className="text-[#000000] text-lg font-[350]">
-          Date Month Year
-        </span>
-        <span className="text-[#000000] text-xl font-semibold">
-          Queue today
-        </span>
-        <span className="text-[#000000] text-lg font-[375]">
-          Number of queue
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function PatientRow() {
-  return (
-    <div className="flex flex-row gap-11 ml-8">
-      <h1 className="text-sm">Patient Name</h1>
-      <h1 className="text-sm">Patient ID</h1>
     </div>
   );
 }
