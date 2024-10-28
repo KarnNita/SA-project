@@ -51,13 +51,16 @@ function EditStaff() {
         const data = await response.json();
         if (data.length > 0) {
           setStaffData(data[0]);
-
-          // Populate formData with existing staff data
+  
+          // Format birthday to YYYY-MM-DD
+          const formattedBirthday = data[0].birthday.split("T")[0];
+  
+          // Populate formData with existing staff data, including formatted birthday
           setFormData({
             username: data[0].username,
             name: data[0].staff_name,
             staff_phone_number: data[0].staff_phone_number,
-            birthday: data[0].birthday,
+            birthday: formattedBirthday,
             gender: data[0].gender,
             role: data[0].role,
             email: data[0].email,
@@ -74,7 +77,7 @@ function EditStaff() {
     };
   
     fetchData();
-  }, []);
+  }, []);  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -86,11 +89,13 @@ function EditStaff() {
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
+    console.log("Form data being submitted:", formData); // Log formData to check its structure and values
+  
     submitToApi();
-  };
+  };  
 
   const submitToApi = async () => {
     try {
@@ -103,16 +108,17 @@ function EditStaff() {
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Full error response:", errorData);
-        setError(errorData.message || "Failed to add staff data.");
+        setError(errorData.message || "Failed to save staff data.");
         return;
       }
   
+      console.log("Data successfully saved");
       navigate("/staffListView");
     } catch (err) {
       setError("Error submitting data. Please try again.");
       console.error("Request error:", err);
     }
-  };
+  };  
 
   const validateForm = () => {
     const { staff_phone_number, birthday, email } = formData;

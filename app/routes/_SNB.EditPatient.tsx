@@ -32,12 +32,12 @@ function EditPatient() {
 
       {/* พื้นหลัง-Main */}
       <div className="flex flex-col flex-grow bg-white 
-                      w-[100svh] ml-[55px] mt-[90px] h-[calc(100svh-170px)]
+                      w-[100svh] ml-[55px] mt-[90px] h-[calc(100svh-10px)]
                       rounded-[37px] border border-gray-300
                       shadow-[0px_4px_4px_rgba(0,0,0,0.25)] p-12">
 
         {/* หัวเรื่อง-Text */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center h-auto w-[70svw] mb-6">
           <h1 className="text-[#2F919C] text-3xl">Edit Patient</h1>
         </div>
 
