@@ -204,7 +204,6 @@ function EditStaff() {
                 name="birthday"
                 value={formData.birthday}
                 onChange={handleChange}
-                displayFormat="EEEE, d of MMM, yyyy HH:mm"
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
