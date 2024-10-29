@@ -1,69 +1,130 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from '@remix-run/react';
 
+interface Patient {
+  patient_id: number;
+  name_surname: string;
+  phone_number: string;
+  birthday: string;
+  gender: string;
+  course_count: number;
+  appointment_date: number;
+  first_visit_date: number;
+}
+
 function EditPatient() {
-  const [formData, setFormData] = useState({
-    PatientID: "",
-    name: "",
-    tel: "",
-    age: "",
-    gender: "",
-    appointmentDate: "",
-    course: "",
-  });
-
   const navigate = useNavigate();
+  const [patientData, setPatientData] = useState<Patient | null>(null);
+  const [formData, setFormData] = useState<Partial<Patient>>({});
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<string>("Guest");
 
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      const storedPatientID = sessionStorage.getItem("currentPatientID");
+      const currentPatientIDValue = storedPatientID
+        ? storedPatientID.replace(/^"|"$/g, "")
+        : "Guest";
+
+      setCurrentUser(currentPatientIDValue);
+
+      if (currentPatientIDValue === "Guest") {
+        setError("No patient ID found in session.");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/patient/editPatient/${currentPatientIDValue}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch patient data");
+        }
+
+        const data = await response.json();
+        console.log(data);
+        if (data.length > 0) {
+          setPatientData(data[0]);
+        } else {
+          setError("No data found for this patient ID.");
+        }
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+    fetchPatientData();
+  }, []);
+
+  // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    alert('Saved.');
-    navigate('/PatientDetail');
+  // Handle form submission
+  const handleSave = async () => {
+    if (!formData.patient_id) return; // Ensure patient ID exists
+
+    try {
+      const response = await fetch(`https://dinosaur.prakasitj.com/patient/updatePatient/${formData.patient_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to save patient data');
+      }
+      navigate("/PatientDetail"); // Navigate after saving
+    } catch (error) {
+      console.error(error);
+      setError("Failed to save data.");
+    }
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="flex flex-row h-[100svh] bg-[#DCE8E9] overflow-hidden relative">
-
-      {/* พื้นหลัง-Main */}
       <div className="flex flex-col flex-grow bg-white 
                       w-[100svh] ml-[55px] mt-[90px] h-[calc(100svh-170px)]
                       rounded-[37px] border border-gray-300
                       shadow-[0px_4px_4px_rgba(0,0,0,0.25)] p-12">
-
-        {/* หัวเรื่อง-Text */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-[#2F919C] text-3xl">Edit Patient</h1>
         </div>
 
-        {/* แบบฟอร์มแก้ไขผู้ป่วย */}
         <form className="flex flex-col gap-2.5">
           <div>
-            <label htmlFor="tel" className="block mb-1 text-lg">Patient ID:</label>
-            <input
-              type="Patient ID"
-              id="Patient ID"
-              name="Patient ID"
-              value={formData.PatientID}
-              onChange={handleChange}
-              className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
-              required
-            />
-          </div>
-
-        
-          <div>
-            <label htmlFor="name" className="block mb-1 text-lg">Name:</label>
+            <label htmlFor="patient_id" className="block mb-1 text-lg">Patient ID:</label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="patient_id"
+              name="patient_id"
+              value={formData.patient_id || ''}
+              onChange={handleChange}
+              className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
+              readOnly // Make Patient ID read-only
+              required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="name_surname" className="block mb-1 text-lg">Name:</label>
+            <input
+              type="text"
+              id="name_surname"
+              name="name_surname"
+              value={formData.name_surname || ''}
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
               required
@@ -71,12 +132,12 @@ function EditPatient() {
           </div>
 
           <div>
-            <label htmlFor="tel" className="block mb-1 text-lg">Telephone:</label>
+            <label htmlFor="phone_number" className="block mb-1 text-lg">Telephone:</label>
             <input
               type="tel"
-              id="tel"
-              name="tel"
-              value={formData.tel}
+              id="phone_number"
+              name="phone_number"
+              value={formData.phone_number || ''}
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
               required
@@ -84,12 +145,12 @@ function EditPatient() {
           </div>
 
           <div>
-            <label htmlFor="birthday" className="block mb-1 text-lg">Age:</label>
+            <label htmlFor="birthday" className="block mb-1 text-lg">Birthday:</label>
             <input
-              type="age"
-              id="age"
-              name="age"
-              value={formData.age}
+              type="date"
+              id="birthday"
+              name="birthday"
+              value={formData.birthday ? new Date(formData.birthday).toISOString().split('T')[0] : ''}
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
               required
@@ -101,10 +162,9 @@ function EditPatient() {
             <select
               id="gender"
               name="gender"
-              value={formData.gender}
+              value={formData.gender || ''}
               onChange={handleChange}
               className="w-[70svh] py-2 pl-3 bg-gray-300 text-sm rounded-full"
-
               required
             >
               <option value="">Select Gender</option>
@@ -114,12 +174,12 @@ function EditPatient() {
           </div>
 
           <div>
-            <label htmlFor="appointmentDate" className="block mb-1 text-lg">Appointment Date & Time:</label>
+            <label htmlFor="appointment_date" className="block mb-1 text-lg">Appointment Date & Time:</label>
             <input
               type="datetime-local"
-              id="appointmentDate"
-              name="appointmentDate"
-              value={formData.appointmentDate}
+              id="appointment_date"
+              name="appointment_date"
+              value={formData.appointment_date ? new Date(formData.appointment_date).toISOString().slice(0, 16) : ''}
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
               required
@@ -127,12 +187,12 @@ function EditPatient() {
           </div>
 
           <div>
-            <label htmlFor="course" className="block mb-1 text-lg">Course:</label>
+            <label htmlFor="course_count" className="block mb-1 text-lg">Course Count:</label>
             <input
               type="number"
-              id="course"
-              name="course"
-              value={formData.course}
+              id="course_count"
+              name="course_count"
+              value={formData.course_count || ''}
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
               required
@@ -141,7 +201,7 @@ function EditPatient() {
         </form>
       </div>
 
-      {/* ปุ่ม Save */}
+      {/* Save Button */}
       <div className="ml-[8svh] mt-[86.8svh]">
         <button
           onClick={handleSave}
