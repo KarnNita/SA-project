@@ -58,7 +58,8 @@ const Home: React.FC = () => {
 
   const filteredPatients = patientList.filter((patient) => patient);
 
-  const handlePatientDetail = () => {
+  const handlePatientDetail = (patientId: number) => {
+    sessionStorage.setItem("currentPatientID", JSON.stringify(patientId));
     navigate("/PatientDetail");
   };
 
@@ -113,7 +114,7 @@ const Home: React.FC = () => {
                   <th style={thTdStyle}></th>
                 </tr>
               </thead>
-              <tbody onClick={handlePatientDetail}>
+              <tbody>
                 {filteredPatients.map((patient: Patient, index: number) => (
                   <tr
                     key={index}
@@ -122,15 +123,15 @@ const Home: React.FC = () => {
                       cursor: "pointer",
                     }}
                   >
-                    <td style={thTdStyle}>{patient.patient_id}</td>
-                    <td style={thTdStyle}>{patient.name_surname}</td>
-                    <td style={thTdStyle}>{patient.phone_number}</td>
-                    <td style={thTdStyle}>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>{patient.patient_id}</td>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>{patient.name_surname}</td>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>{patient.phone_number}</td>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>
                       {format(patient.birthday, "dd-MM-yyyy")}
                     </td>
-                    <td style={thTdStyle}>{patient.gender}</td>
-                    <td style={thTdStyle}>
-                      <td style={thTdStyle}>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>{patient.gender}</td>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>
+                      <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>
                         {patient.appointment_date
                           ? format(
                               new Date(patient.appointment_date),
@@ -139,7 +140,7 @@ const Home: React.FC = () => {
                           : "N/A"}
                       </td>
                     </td>
-                    <td style={thTdStyle}>{patient.course_count}</td>
+                    <td style={thTdStyle} onClick={() => handlePatientDetail(patient.patient_id)}>{patient.course_count}</td>
                   </tr>
                 ))}
               </tbody>

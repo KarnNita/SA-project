@@ -12,6 +12,8 @@ import MedicalRecord from './MedicalRecord';
 import EquipmentHistory from './_SNB.EquipmentHistory';
 import StaffPage from './_SNB.StaffPage';
 import EditStaff from './_SNB.EditStaff';
+import EditPatient from './_SNB.EditPatient';
+import PatientDetail from './_SNB.PatientDetail';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/equimentHistory" element={<EquipmentHistory />} />
         <Route path="/staffPage" element={<StaffPage />} />
         <Route path="/editStaff" element={<EditStaff />} />
+        <Route path="/editPatient" element={<EditPatient />} />
+        <Route path="/patientDetail" element={<PatientDetail />} />
       </Routes>
     </Router>
   );
