@@ -8,8 +8,8 @@ interface Patient {
   birthday: string;
   gender: string;
   course_count: number;
-  appointment_date: number;
-  first_visit_date: number;
+  appointment_date: string; // Keep it as string to handle input correctly
+  first_visit_date: string;
 }
 
 function EditPatient() {
@@ -45,7 +45,7 @@ function EditPatient() {
 
         if (data.length > 0) {
           setPatientData(data[0]);
-          setFormData(data[0]);  // Set form data initially with patient data
+          setFormData(data[0]);
         } else {
           setError("No data found for this patient ID.");
         }
@@ -63,33 +63,43 @@ function EditPatient() {
     fetchPatientData();
   }, []);
 
-  // Handle input changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Parse course_count to an integer
+    const newValue = name === "course_count" ? parseInt(value, 10) : value;
+
+    // Convert date format for appointment_date
+    if (name === "appointment_date") {
+      // Format the appointment date to a consistent format
+      const dateValue = new Date(value).toISOString();
+      setFormData((prev) => ({ ...prev, [name]: dateValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: newValue }));
+    }
   };
 
-  // Handle form submission
   const handleSave = async () => {
     if (!formData.patient_id) return;
 
     try {
       const response = await fetch(
-        `https://dinosaur.prakasitj.com/patient/editPatient/${formData.patient_id}`,
+        `https://dinosaur.prakasitj.com/patient/editPatient/`,
         {
-          method: "PUT",
+          method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
         }
       );
+
       if (!response.ok) {
         throw new Error("Failed to save patient data");
       }
-      navigate("/PatientDetail");
+      navigate(`/PatientDetail/`);
     } catch (error) {
       console.error(error);
       setError("Failed to save data.");
@@ -204,9 +214,7 @@ function EditPatient() {
               name="appointment_date"
               value={
                 formData.appointment_date
-                  ? new Date(formData.appointment_date)
-                      .toISOString()
-                      .slice(0, 16)
+                  ? new Date(formData.appointment_date).toISOString().slice(0, 16)
                   : ""
               }
               onChange={handleChange}
