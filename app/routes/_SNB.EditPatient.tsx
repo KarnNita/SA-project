@@ -28,7 +28,7 @@ function EditPatient() {
   };
 
   return (
-    <div className="flex flex-row h-[100svh] bg-[#DCE8E9] overflow-hidden relative">
+    <div className="flex flex-row h-[100svh] bg-[#DCE8E9] ml-20">
 
       {/* พื้นหลัง-Main */}
       <div className="flex flex-col flex-grow bg-white 
@@ -138,19 +138,16 @@ function EditPatient() {
               required
             />
           </div>
-        </form>
-      </div>
-
-      {/* ปุ่ม Save */}
-      <div className="ml-[8svh] mt-[86.8svh]">
-        <button
+          <button
           onClick={handleSave}
           className="bg-[#2F919C] text-white font-semibold py-2 px-6
                     h-[50px] w-[14svh] rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
-                    hover:bg-[#236971] transition-all text-xl">
+                    hover:bg-[#236971] transition-all text-xl ml-[35svw]">
           Save
         </button>
+        </form>
       </div>
+        
     </div>
   );
 }

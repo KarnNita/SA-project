@@ -3,6 +3,7 @@ import { useNavigate } from "@remix-run/react";
 import SideNavBar from "./_SNB";
 import React from "react";
 import PatientHeader from "./components/PatientHeader";
+import { format } from "date-fns";
 
 interface MedicalRecordList {
   record_id: number;
@@ -97,10 +98,10 @@ function MedicalRecord() {
                     {record.record_id}
                   </td>
                   <td
-                    className="pl-14 py-2"
+                    className="pl-8 py-2"
                     style={{ borderBottom: "1px solid white" }}
                   >
-                    {record.appointment_date}
+                    {format(new Date(record.appointment_date), 'dd/MM/yyyy')}
                   </td>
                   <td
                     className="pl-[2rem] py-2"

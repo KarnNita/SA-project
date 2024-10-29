@@ -113,7 +113,7 @@ function IncomeExpenses() {
                 (record) => (
                   <tr key={record.financial_record_id} className="border-b">
                     <td className="pl-24 py-2" style={{ borderBottom: "1px solid white" }}>{record.financial_record_id}</td>
-                    <td className="pl-[4.5rem] py-2" style={{ borderBottom: "1px solid white" }}>{format(record.record_date, 'dd-MM-yyyy')}</td>
+                    <td className="pl-[4.5rem] py-2" style={{ borderBottom: "1px solid white" }}>{format(record.record_date, 'dd/MM/yyyy')}</td>
                     <td className="pl-12 py-2" style={{ borderBottom: "1px solid white" }}>{record.income_and_expenses}</td>
                     <td className="pl-[3.4rem] py-2" style={{ borderBottom: "1px solid white" }}>${record.cost}</td>
                     <td className="pl-[5rem] py-2" style={{ borderBottom: "1px solid white" }}>{record.staff_id}</td>

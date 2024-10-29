@@ -120,7 +120,7 @@ const StaffListView: React.FC = () => {
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.username}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_name}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_phone_number}</td>
-                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{format(new Date(staff.birthday), 'dd-MM-yyyy')}</td>
+                    <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{format(new Date(staff.birthday), 'dd/MM/yyyy')}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.gender}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.role}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.email}</td>

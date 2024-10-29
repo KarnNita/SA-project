@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "@remix-run/react";
+import { format } from "date-fns";
 
 interface Patient {
   patient_id: number;
@@ -9,7 +10,7 @@ interface Patient {
   phone_number: string;
   birthday: string;
   gender: string;
-  appoinment_date: string;
+  appointment_date: Date;
   course_count: number;
 }
 
@@ -193,12 +194,12 @@ const ListViewPatient: React.FC = () => {
                   <td style={thTdStyle} onClick={handlePatientDetail}>{patient.name_surname}</td>
                   <td style={thTdStyle} onClick={handlePatientDetail}>{patient.phone_number}</td>
                   <td style={thTdStyle} onClick={handlePatientDetail}>
-                    {new Date(patient.birthday).toLocaleDateString()}
+                    {format(new Date(patient.birthday), 'dd/MM/yyyy')}
                   </td>
                   <td style={thTdStyle} onClick={handlePatientDetail}>{patient.gender}</td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>
-                    {new Date(patient.appoinment_date).toLocaleString()}
-                  </td>
+                  <td style={thTdStyle}>
+                  {format(new Date(patient.appointment_date), 'dd/MM/yyyy kk:mm')}
+      </td>
                   <td style={thTdStyle} onClick={handlePatientDetail}>{patient.course_count}</td>
                   <td style={thTdStyle}>
                     <button

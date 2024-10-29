@@ -21,6 +21,7 @@ function AddNewPatient() {
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
+      [name]: name === "course_count" ? Number(value) : value,
     }));
   };
 

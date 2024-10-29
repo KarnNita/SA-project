@@ -9,7 +9,7 @@ interface Patient {
   phone_number: string;
   birthday: string;
   gender: string;
-  appoinment_date: string;
+  appointment_date: string;
   course_count: number;
 }
 
@@ -33,7 +33,18 @@ const Home: React.FC = () => {
 
         const data: Patient[] = await response.json();
         data.sort((a, b) => a.patient_id - b.patient_id);
-        setPatientList(data);
+
+        const today = new Date();
+        const formattedToday = format(today, "yyyy-MM-dd");
+
+        // Filter patients with appointment date = today
+        const filteredData = data.filter(
+          (patient) =>
+            format(new Date(patient.appointment_date), "yyyy-MM-dd") ===
+            formattedToday
+        );
+
+        setPatientList(filteredData);
       } catch (err) {
         setError("Failed to load data");
         console.error(err);
@@ -45,6 +56,12 @@ const Home: React.FC = () => {
     fetchData();
   }, []); // Empty dependency array to fetch data on mount
 
+  const filteredPatients = patientList.filter((patient) => patient);
+
+  const handlePatientDetail = () => {
+    navigate("/PatientDetail");
+  };
+
   const handleSeeAllClick = () => {
     navigate("/ListViewPatient"); // เปลี่ยนเส้นทางไปยังหน้า ListViewPatient
   };
@@ -52,12 +69,6 @@ const Home: React.FC = () => {
   console.table(patientList);
 
   const [searchTerm, setSearchTerm] = React.useState<string>("");
-
-  const filteredPatients = patientList.filter(
-    (patient: Patient) =>
-      // patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-      patient
-  );
 
   return (
     <div className="flex flex-row w-[78svw]">
@@ -102,9 +113,15 @@ const Home: React.FC = () => {
                   <th style={thTdStyle}></th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody onClick={handlePatientDetail}>
                 {filteredPatients.map((patient: Patient, index: number) => (
-                  <tr key={index} style={{ borderBottom: "1px solid white" }}>
+                  <tr
+                    key={index}
+                    style={{
+                      borderBottom: "1px solid white",
+                      cursor: "pointer",
+                    }}
+                  >
                     <td style={thTdStyle}>{patient.patient_id}</td>
                     <td style={thTdStyle}>{patient.name_surname}</td>
                     <td style={thTdStyle}>{patient.phone_number}</td>
@@ -114,8 +131,11 @@ const Home: React.FC = () => {
                     <td style={thTdStyle}>{patient.gender}</td>
                     <td style={thTdStyle}>
                       <td style={thTdStyle}>
-                        {patient.appoinment_date
-                          ? patient.appoinment_date
+                        {patient.appointment_date
+                          ? format(
+                              new Date(patient.appointment_date),
+                              "dd-MM-yyyy kk:mm"
+                            )
                           : "N/A"}
                       </td>
                     </td>
