@@ -21,8 +21,9 @@ function EditStaff() {
   const [currentStaff, setCurrentStaff] = useState<string>("Guest");
 
   const [formData, setFormData] = useState({
+    staff_id: "",
     username: "",
-    name: "",
+    staff_name: "", 
     staff_phone_number: "",
     birthday: "",
     gender: "",
@@ -33,7 +34,7 @@ function EditStaff() {
   useEffect(() => {
     const fetchData = async () => {
       const storedStaff = sessionStorage.getItem("currentStaff");
-      const currentStaffValue = storedStaff ? storedStaff.replace(/^"|"$/g, '') : "Guest";
+      const currentStaffValue = storedStaff ? storedStaff.toLowerCase().replace(/^"|"$/g, '') : "Guest";
       setCurrentStaff(currentStaffValue);
   
       if (currentStaffValue === "Guest") {
@@ -52,13 +53,12 @@ function EditStaff() {
         if (data.length > 0) {
           setStaffData(data[0]);
   
-          // Format birthday to YYYY-MM-DD
           const formattedBirthday = data[0].birthday.split("T")[0];
   
-          // Populate formData with existing staff data, including formatted birthday
           setFormData({
+            staff_id: data[0].staff_id, // Ensure staff_id is included
             username: data[0].username,
-            name: data[0].staff_name,
+            staff_name: data[0].staff_name, // Changed from 'name' to 'staff_name'
             staff_phone_number: data[0].staff_phone_number,
             birthday: formattedBirthday,
             gender: data[0].gender,
@@ -77,13 +77,17 @@ function EditStaff() {
     };
   
     fetchData();
-  }, []);  
-
+  }, []);
+   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    // Capitalize the gender input value
+    const formattedValue = name === 'gender' ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: formattedValue,
     }));
   };
 
@@ -92,7 +96,7 @@ function EditStaff() {
   
     if (!validateForm()) return;
   
-    console.log("Form data being submitted:", formData); // Log formData to check its structure and values
+    console.log("Form data being submitted:", formData); 
   
     submitToApi();
   };  
@@ -118,8 +122,8 @@ function EditStaff() {
       setError("Error submitting data. Please try again.");
       console.error("Request error:", err);
     }
-  };  
-
+  };
+  
   const validateForm = () => {
     const { staff_phone_number, birthday, email } = formData;
     const telRegex = /^\d{10}$/;
@@ -146,15 +150,15 @@ function EditStaff() {
   };
 
   return (
-    <div className="flex flex-col w-[70svw] bg-[#DCE8E9]">
+    <div className="flex flex-col w-[70svw] bg-[#DCE8E9] min-h-screen">
       <div className="flex justify-center items-center pt-12 pb-12">
-        <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg w-[50svw]">
+        <div className="p-6 border border-gray-300 rounded-3xl bg-white shadow-lg w-[50svw] flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Edit Staff</h1>
-            <span className="text-[#1FA1AF] text-2xl">{formData.name}</span>
+            <span className="text-[#1FA1AF] text-2xl">{formData.staff_name}</span>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
             <div className="mb-4">
               <label htmlFor="username" className="block mb-1">
                 Username:
@@ -171,14 +175,14 @@ function EditStaff() {
             </div>
 
             <div className="mb-4">
-              <label htmlFor="name" className="block mb-1">
+              <label htmlFor="staff_name" className="block mb-1">
                 Name:
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="staff_name" // Changed id to 'staff_name'
+                name="staff_name" // Changed name to 'staff_name'
+                value={formData.staff_name} // Changed from 'name' to 'staff_name'
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
@@ -222,14 +226,14 @@ function EditStaff() {
               <select
                 id="gender"
                 name="gender"
-                value={formData.gender.toLocaleLowerCase()}
+                value={formData.gender}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               >
                 <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="Male">Male</option> {/* Capitalized */}
+                <option value="Female">Female</option> {/* Capitalized */}
               </select>
             </div>
 
@@ -266,14 +270,16 @@ function EditStaff() {
               />
             </div>
 
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-500 mb-4">{error}</p>}
 
-            <button
-              type="submit"
-              className="w-full py-2 bg-[#1FA1AF] text-white font-bold rounded-lg mt-4"
-            >
-              Save
-            </button>
+            <div className="flex justify-center mt-auto">
+              <button
+                type="submit"
+                className="w-1/2 py-2 px-4 bg-[#1FA1AF] text-white rounded-3xl"
+              >
+                Save Changes
+              </button>
+            </div>
           </form>
         </div>
       </div>
