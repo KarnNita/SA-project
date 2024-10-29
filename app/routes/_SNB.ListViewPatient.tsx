@@ -48,7 +48,8 @@ const ListViewPatient: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handlePatientDetail = () => {
+  const handlePatientDetail = (patientId: number) => {
+    sessionStorage.setItem("currentPatientID", JSON.stringify(patientId));
     navigate("/PatientDetail");
   };
 
@@ -185,22 +186,23 @@ const ListViewPatient: React.FC = () => {
             </thead>
             
             <tbody>
-              {filteredPatients.map((patient, index) => (
+              {filteredPatients.map((patient) => (
                 <tr
-                  key={index}
+                  key={patient.patient_id}
                   style={{ borderBottom: "1px solid white", cursor: "pointer" }}
+                  onClick={() => handlePatientDetail(patient.patient_id)}
                 >
-                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.patient_id}</td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.name_surname}</td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.phone_number}</td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>
+                  <td style={thTdStyle}>{patient.patient_id}</td>
+                  <td style={thTdStyle}>{patient.name_surname}</td>
+                  <td style={thTdStyle}>{patient.phone_number}</td>
+                  <td style={thTdStyle}>
                     {format(new Date(patient.birthday), 'dd/MM/yyyy')}
                   </td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.gender}</td>
+                  <td style={thTdStyle}>{patient.gender}</td>
                   <td style={thTdStyle}>
-                  {format(new Date(patient.appointment_date), 'dd/MM/yyyy kk:mm')}
-      </td>
-                  <td style={thTdStyle} onClick={handlePatientDetail}>{patient.course_count}</td>
+                    {format(new Date(patient.appointment_date), 'dd/MM/yyyy kk:mm')}
+                  </td>
+                  <td style={thTdStyle}>{patient.course_count}</td>
                   <td style={thTdStyle}>
                     <button
                       style={{

@@ -60,6 +60,11 @@ function PatientDetail() {
     fetchPatientData();
   }, []);
 
+  const handleEdit = (patientId: string) => {
+    sessionStorage.setItem("currentPatientID", patientId);
+    navigate("/editPatient");
+  };
+
   return (
     <div className="flex h-[140svh] bg-[#DCE8E9] w-[170svh] bottom-[200]">
       <div className="flex flex-col flex-grow bg-white mx-5 my-5 rounded-3xl border border-gray-300 h-[calc(100svh-50px)] shadow-md">
@@ -69,11 +74,7 @@ function PatientDetail() {
             <div
               className="flex items-center cursor-pointer"
               onClick={() => {
-                sessionStorage.setItem(
-                  "currentPatientID",
-                  JSON.stringify(patientData?.patient_id)
-                );
-                navigate("/EditPatient");
+                {handleEdit(JSON.stringify(patientData?.patient_id))}
               }}
             >
               <div className="h-5 w-5 bg-yellow-500 rounded-full mr-2"></div>

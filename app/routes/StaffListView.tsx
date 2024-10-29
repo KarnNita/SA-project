@@ -116,7 +116,7 @@ const StaffListView: React.FC = () => {
               </thead>
               <tbody>
                 {filteredStaff.map((staff) => (
-                  <tr key={staff.staff_id} style={{ borderBottom: "1px solid white" }}>
+                  <tr key={staff.staff_id} style={{ borderBottom: "1px solid white", cursor:"pointer"}}>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.username}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_name}</td>
                     <td style={thTdStyle} onClick={() => handleClickList(staff.username)}>{staff.staff_phone_number}</td>
