@@ -33,6 +33,7 @@ function App() {
         <Route path="/editStaff" element={<EditStaff />} />
         <Route path="/editPatient" element={<EditPatient />} />
         <Route path="/patientDetail" element={<PatientDetail />} />
+        <Route path="/treatmentSelect" element={<TreatmentSelect />} />
       </Routes>
     </Router>
   );

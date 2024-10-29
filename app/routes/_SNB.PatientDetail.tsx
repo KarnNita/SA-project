@@ -17,7 +17,7 @@ function PatientDetail() {
   const [patientData, setPatientData] = useState<Patient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<string>("Guest");
+  const [currentPatient, setCurrentPatient] = useState<string>("Guest");
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -26,7 +26,7 @@ function PatientDetail() {
         ? storedPatientID.replace(/^"|"$/g, "")
         : "Guest";
 
-      setCurrentUser(currentPatientIDValue);
+      setCurrentPatient(currentPatientIDValue);
 
       if (currentPatientIDValue === "Guest") {
         setError("No patient ID found in session.");
@@ -63,6 +63,11 @@ function PatientDetail() {
   const handleEdit = (patientId: string) => {
     sessionStorage.setItem("currentPatientID", patientId);
     navigate("/editPatient");
+  };
+
+  const handleTreatmentSelect = (patientId: string) => {
+    sessionStorage.setItem("currentPatientID", patientId);
+    navigate("/treatmentSelect");
   };
 
   return (
@@ -139,7 +144,8 @@ function PatientDetail() {
           </div>
         </div>
 
-        <button className="bg-[rgb(47,145,156)] text-white px-5 py-2 rounded-md ml-auto mr-10 mt-6 hover:bg-[#1F7074] transition-colors duration-300">
+        <button className="bg-[rgb(47,145,156)] text-white px-5 py-2 rounded-md ml-auto mr-10 mt-6 hover:bg-[#1F7074] transition-colors duration-300"
+        onClick={()=>{handleTreatmentSelect(JSON.stringify(patientData?.patient_id))}}>
           Select Treatment
         </button>
       </div>

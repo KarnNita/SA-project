@@ -1,15 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TreatmentCardProps {
   treatmentName: string;
   item1: string;
   item2: string;
   item3: string;
+  // imgSrc: string;
   onTreatmentSelect: (treatmentName: string, isSelected: boolean) => void; // Callback to parent
+}
+
+interface Staff {
+  staff_id: number;
+  username: string;
+  staff_name: string;
+  staff_phone_number: string;
+  birthday: string;
+  gender: string;
+  role: string;
+  email: string;
 }
 
 export default function TreatmentCard({ treatmentName, item1, item2, item3, onTreatmentSelect }: TreatmentCardProps) {
   const [checked, setChecked] = useState(false);
+  const [staffList, setStaffList] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("https://dinosaur.prakasitj.com/staff/getStaffList");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch staff data");
+        }
+
+        const data = await response.json();
+        setStaffList(data);
+      } catch (err) {
+        setError("Failed to load data");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleCheckboxChange = () => {
     setChecked((prev) => !prev);
@@ -24,7 +61,7 @@ export default function TreatmentCard({ treatmentName, item1, item2, item3, onTr
       >
         <img
           className="object-cover w-full h-full rounded-3xl"
-          src="https://www.petlandflorida.com/wp-content/uploads/2022/04/shutterstock_1290320698-1-scaled.jpg"
+          src={"https://www.petlandflorida.com/wp-content/uploads/2022/04/shutterstock_1290320698-1-scaled.jpg"}
         />
       </div>
 
@@ -36,11 +73,15 @@ export default function TreatmentCard({ treatmentName, item1, item2, item3, onTr
 
         <div className="flex flex-row gap-3 pt-2">
           <h1>Choose Doctor:</h1>
-          <select className="w-[19.09rem] rounded-3xl text-center">
-            <option value="">Select Doctor</option>
-            <option value="Doctor1">Doctor1</option>
-            <option value="Doctor2">Doctor2</option>
-          </select>
+          {staffList.map((staff) => (
+              <select className="w-[19.09rem] rounded-3xl text-center">
+              <option value="Doctor1">{staff.staff_name}</option>
+              {/* <option value="Doctor1">{staff.staff_name}</option>
+              <option value="Doctor2">Doctor2</option>
+              <option value=''></option> */}
+            </select>
+            ))}
+
         </div>
       </div>
 

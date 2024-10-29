@@ -1,4 +1,9 @@
-export default function PatientHeader(){
+interface PatientHeaderProps {
+  patientName: string;
+  patientID: string;
+}
+
+export default function PatientHeader({patientName, patientID}: PatientHeaderProps){
     return(
         <div className="flex flex-row gap-3 justify-start items-center">
 
@@ -10,9 +15,9 @@ export default function PatientHeader(){
 
         <div className="flex flex-col">
           <span className="text-[#000000] text-xl font-semibold">
-            Patient Name
+            {patientName}
           </span>
-          <span className="text-[#000000] text-lg">Patient ID:</span>
+          <span className="text-[#000000] text-lg">{patientID}</span>
         </div>
 
       </div>

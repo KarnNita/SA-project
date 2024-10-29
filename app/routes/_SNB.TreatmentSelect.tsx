@@ -3,10 +3,23 @@ import { useNavigate } from '@remix-run/react';
 import TreatmentCard from "./components/TreatmentCard";
 import PatientHeader from "./components/PatientHeader";
 
+interface Staff {
+  staff_id: number;
+  username: string;
+  staff_name: string;
+  staff_phone_number: string;
+  birthday: string;
+  gender: string;
+  role: string;
+  email: string;
+}
+
 const TreatmentSelect: React.FC = () => {
   const [selectedTreatments, setSelectedTreatments] = useState<string[]>([]);
   const [treatmentList, setTreatmentList] = useState<{ treatment_id: number; cost: number; treatment_name: string; }[]>([]);
   const navigate = useNavigate();
+  const [currentPatient, setCurrentPatient] = useState<string>("Guest");
+  const [staffList, setStaffList] = useState<Staff[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,6 +28,13 @@ const TreatmentSelect: React.FC = () => {
       );
       const data = await response.json();
       setTreatmentList(data);
+
+      const storedPatientID = sessionStorage.getItem("currentPatientID");
+      const currentPatientIDValue = storedPatientID
+        ? storedPatientID.replace(/^"|"$/g, "")
+        : "Guest";
+
+      setCurrentPatient(currentPatientIDValue);
     };
     fetchData();
   }, []);
@@ -39,7 +59,7 @@ const TreatmentSelect: React.FC = () => {
           <h1 className="text-[#1FA1AF] text-2xl">Treatment Select</h1>
         </div>
 
-        <PatientHeader />
+        <PatientHeader patientName={currentPatient} patientID={currentPatient}/>
 
         <div className="flex flex-col gap-[0.65rem] mt-5">
           {treatmentList.map((treatment) => (

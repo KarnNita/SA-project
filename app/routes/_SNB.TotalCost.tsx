@@ -75,7 +75,7 @@ const TotalCost: React.FC = () => {
           <h1 className="text-[#1FA1AF] text-2xl">Total Cost</h1>
         </div>
 
-        <PatientHeader />
+        <PatientHeader patientName='' patientID=''/>
 
         <div className="flex flex-row mt-5">
           <div className="flex flex-col gap-4">
