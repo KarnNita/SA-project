@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { format } from "date-fns";
 
 interface EquipmentRequisition {
   requisition_id: number;
@@ -18,7 +19,9 @@ interface EquipmentStock {
 
 function EquipmentHistory() {
   const [activeTab, setActiveTab] = useState("Use Equipment");
-  const [requisitionList, setRequisitionList] = useState<EquipmentRequisition[]>([]);
+  const [requisitionList, setRequisitionList] = useState<
+    EquipmentRequisition[]
+  >([]);
   const [stockList, setStockList] = useState<EquipmentStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +40,8 @@ function EquipmentHistory() {
           throw new Error("Failed to fetch data");
         }
 
-        const requisitionData: EquipmentRequisition[] = await requisitionResponse.json();
+        const requisitionData: EquipmentRequisition[] =
+          await requisitionResponse.json();
         const stockData: EquipmentStock[] = await stockResponse.json();
 
         setRequisitionList(requisitionData);
@@ -54,29 +58,67 @@ function EquipmentHistory() {
   }, []);
 
   const renderTableData = () => {
-    if (loading) return <tr><td>Loading...</td></tr>;
-    if (error) return <tr><td>{error}</td></tr>;
+    if (loading)
+      return (
+        <tr>
+          <td>Loading...</td>
+        </tr>
+      );
+    if (error)
+      return (
+        <tr>
+          <td>{error}</td>
+        </tr>
+      );
 
     const data = activeTab === "Use Equipment" ? requisitionList : stockList;
 
     return data.map((record) => (
-      <tr key={activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).stock_in_id} className="border-b">
-        <td className="pl-[5rem] py-2" style={{ borderBottom: "1px solid white" }}>
-          {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).stock_in_id}
+      <tr
+        key={
+          activeTab === "Use Equipment"
+            ? (record as EquipmentRequisition).requisition_id
+            : (record as EquipmentStock).stock_in_id
+        }
+        className="border-b"
+      >
+        <td
+          className="pl-[5rem] py-2"
+          style={{ borderBottom: "1px solid white" }}
+        >
+          {activeTab === "Use Equipment"
+            ? (record as EquipmentRequisition).requisition_id
+            : (record as EquipmentStock).stock_in_id}
         </td>
         <td className="pl-16 py-2" style={{ borderBottom: "1px solid white" }}>
-          {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_id : (record as EquipmentStock).equipment_id}
+          {activeTab === "Use Equipment"
+            ? (record as EquipmentRequisition).requisition_id
+            : (record as EquipmentStock).equipment_id}
         </td>
         <td className="pl-7 py-2" style={{ borderBottom: "1px solid white" }}>
-          {activeTab === "Use Equipment" ? (record as EquipmentRequisition).requisition_date : (record as EquipmentStock).stock_in_date}
+          {activeTab === "Use Equipment"
+            ? format(
+                new Date((record as EquipmentRequisition).requisition_date),
+                "dd/MM/yyyy"
+              )
+            : format(
+                new Date((record as EquipmentStock).stock_in_date),
+                "dd/MM/yyyy"
+              )}
         </td>
+
         <td className="pl-6 py-2" style={{ borderBottom: "1px solid white" }}>
           {activeTab === "Use Equipment" ? "Use Equipment" : "Import Equipment"}
         </td>
         <td className="pl-8 py-2" style={{ borderBottom: "1px solid white" }}>
-          {activeTab === "Use Equipment" ? (record as EquipmentRequisition).use_amount : (record as EquipmentStock).amount}
+          {activeTab === "Use Equipment"
+            ? (record as EquipmentRequisition).use_amount
+            : (record as EquipmentStock).amount}
         </td>
-        <td className="pl-[4rem] py-2" style={{ borderBottom: "1px solid white" }}>
+        <td
+          className="pl-[4rem] py-2"
+          style={{ borderBottom: "1px solid white" }}
+        >
           {record.staff_id}
         </td>
       </tr>
@@ -99,13 +141,17 @@ function EquipmentHistory() {
 
         <div className="flex flex-row justify-center gap-[400px] text-xl ">
           <h2
-            className={`cursor-pointer ${activeTab === "Use Equipment" ? "text-black" : "text-gray-400"}`}
+            className={`cursor-pointer ${
+              activeTab === "Use Equipment" ? "text-black" : "text-gray-400"
+            }`}
             onClick={() => setActiveTab("Use Equipment")}
           >
             Use Equipment
           </h2>
           <h2
-            className={`cursor-pointer ${activeTab === "Import Equipment" ? "text-black" : "text-gray-400"}`}
+            className={`cursor-pointer ${
+              activeTab === "Import Equipment" ? "text-black" : "text-gray-400"
+            }`}
             onClick={() => setActiveTab("Import Equipment")}
           >
             Import Equipment
@@ -124,9 +170,7 @@ function EquipmentHistory() {
                 <th className="px-8 py-2">Staff ID</th>
               </tr>
             </thead>
-            <tbody>
-              {renderTableData()}
-            </tbody>
+            <tbody>{renderTableData()}</tbody>
           </table>
         </div>
       </div>

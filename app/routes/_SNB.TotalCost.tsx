@@ -412,7 +412,7 @@ const TotalCost: React.FC = () => {
             type="submit"
             className="self-end w-28 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg ml-[23svw] mb-2"
             style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
-            onClick={submitToApi} // Call submitToApi on button click
+            onClick={handleDone}
           >
             Done
           </button>
