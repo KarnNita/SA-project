@@ -56,9 +56,9 @@ function EditStaff() {
           const formattedBirthday = data[0].birthday.split("T")[0];
   
           setFormData({
-            staff_id: data[0].staff_id, // Ensure staff_id is included
+            staff_id: data[0].staff_id,
             username: data[0].username,
-            staff_name: data[0].staff_name, // Changed from 'name' to 'staff_name'
+            staff_name: data[0].staff_name,
             staff_phone_number: data[0].staff_phone_number,
             birthday: formattedBirthday,
             gender: data[0].gender,
@@ -81,8 +81,6 @@ function EditStaff() {
    
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
-    // Capitalize the gender input value
     const formattedValue = name === 'gender' ? value.charAt(0).toUpperCase() + value.slice(1) : value;
 
     setFormData((prevData) => ({
@@ -91,11 +89,41 @@ function EditStaff() {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const checkUsernameAvailability = async () => {
+    try {
+      if (formData.username === staffData?.username) {
+        return true;
+      }
+  
+      const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${formData.username}`);
+      if (!response.ok) {
+        throw new Error("Error checking username availability");
+      }
+  
+      const data = await response.json();
+      if (data.length > 0) {
+        setError("Username already taken. Please choose another username.");
+        return false;
+      }
+  
+      return true;
+    } catch (error) {
+      setError("Error checking username availability. Please try again.");
+      console.error(error);
+      return false;
+    }
+  };
+  
+  
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   
     if (!validateForm()) return;
-  
+
+    const isUsernameAvailable = await checkUsernameAvailability();
+    if (!isUsernameAvailable) return;
+
     console.log("Form data being submitted:", formData); 
   
     submitToApi();
@@ -180,9 +208,9 @@ function EditStaff() {
               </label>
               <input
                 type="text"
-                id="staff_name" // Changed id to 'staff_name'
-                name="staff_name" // Changed name to 'staff_name'
-                value={formData.staff_name} // Changed from 'name' to 'staff_name'
+                id="staff_name"
+                name="staff_name"
+                value={formData.staff_name}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
@@ -232,8 +260,8 @@ function EditStaff() {
                 required
               >
                 <option value="">Select Gender</option>
-                <option value="Male">Male</option> {/* Capitalized */}
-                <option value="Female">Female</option> {/* Capitalized */}
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
 

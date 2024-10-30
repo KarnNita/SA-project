@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent} from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate } from "@remix-run/react";
 
 function SignUp() {
@@ -13,12 +13,26 @@ function SignUp() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
+  
+  useEffect(() => {
+    const checkUsername = async () => {
+      if (formData.username) {
+        await checkUsernameAvailability(formData.username);
+      }
+    };
+
+    const handler = setTimeout(checkUsername, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [formData.username]);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -26,44 +40,31 @@ function SignUp() {
     }));
   };
 
-  const submitToApi = async () => {
+  const checkUsernameAvailability = async (username: string) => {
     try {
-      const response = await fetch("https://dinosaur.prakasitj.com/staff/addStaff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Full error response:", errorData); // Log the complete error data
-        setError(errorData.message || "Failed to add patient data.");
-        return;
+      const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${username}`);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        setUsernameAvailable(false);
+        setError("Username is already taken. Please choose another one.");
+      } else {
+        setUsernameAvailable(true);
+        setError(null);
       }
-  
-      navigate("/staffListView");
     } catch (err) {
-      setError("Error submitting data. Please try again.");
-      console.error("Request error:", err); // Log any request-related errors
+      console.error("Error checking username availability:", err);
+      setError("Failed to check username availability. Please try again.");
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    submitToApi(); // Call the function to send data to the API
-  };
-  
   const validateForm = () => {
-    const { staff_phone_number, birthday, email} = formData;
+    const { staff_phone_number, birthday, email, password, confirmPassword } = formData;
     const telRegex = /^\d{10}$/;
-    const isValidEmail =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!isValidEmail) {
-      setError("Your email is not the right pattern.");
+    if (!emailRegex.test(email)) {
+      setError("Your email is not in the correct format.");
       return false;
     }
 
@@ -79,7 +80,56 @@ function SignUp() {
       return false;
     }
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please try again.");
+      return false;
+    }
+
+    setError(null);
     return true;
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Capitalize the first letter of gender
+    const formattedGender = formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1);
+
+    // Create a new form data object with the formatted gender
+    const dataToSubmit = {
+      ...formData,
+      gender: formattedGender,
+    };
+
+    if (!usernameAvailable) {
+      return; 
+    }
+
+    if (!validateForm()) return;
+
+    await submitToApi(dataToSubmit); // Pass the formatted data to the API submission
+  };
+
+  const submitToApi = async (data: typeof formData) => {
+    try {
+      const response = await fetch("https://dinosaur.prakasitj.com/staff/addStaff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Full error response:", errorData);
+        setError(errorData.message || "Failed to add staff data.");
+        return;
+      }
+
+      navigate("/staffListView");
+    } catch (err) {
+      setError("Error submitting data. Please try again.");
+      console.error("Request error:", err);
+    }
   };
 
   return (
@@ -88,7 +138,6 @@ function SignUp() {
         <div className="p-6 border border-gray-300 h-[115svh] rounded-3xl bg-white shadow-lg w-[40svw]">
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Sign up new staff</h1>
-            <div className="flex flex-row items-center"></div>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -105,6 +154,7 @@ function SignUp() {
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
+              {!usernameAvailable && <p className="text-red-500">{error}</p>}
             </div>
 
             <div className="mb-4">
@@ -165,8 +215,8 @@ function SignUp() {
                 required
               >
                 <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
 
@@ -237,6 +287,7 @@ function SignUp() {
 
             <button
               type="submit"
+              disabled={!usernameAvailable}
               className="absolute right-28 top-[115%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
             >
               Save
