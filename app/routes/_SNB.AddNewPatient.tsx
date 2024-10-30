@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent, MouseEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "@remix-run/react";
 
 function AddNewPatient() {
@@ -14,19 +14,16 @@ function AddNewPatient() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
       [name]: name === "course_count" ? Number(value) : value,
     }));
   };
 
   const validateForm = () => {
-    const { phone_number, birthday, course_count } = formData;
+    const { phone_number, birthday, course_count, appointment_date } = formData;
     const telRegex = /^\d{10}$/;
 
     if (!telRegex.test(phone_number)) {
@@ -51,38 +48,74 @@ function AddNewPatient() {
       return false;
     }
 
+    if (!appointment_date) {
+      setError("You need to provide an appointment date.");
+      return false; // Ensure appointment date is provided
+    }
+
     return true;
+  };
+
+  const checkAppointmentDateAvailability = async (appointment_date: string) => {
+    try {
+      const response = await fetch(`https://dinosaur.prakasitj.com/patient/searchbyAppointmentDate/${appointment_date}`);
+      
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Failed to check appointment date: ${errorDetails}`);
+      }
+
+      const result = await response.json();
+      return result.length > 0; 
+    } catch (error) {
+      console.error("Error in checkAppointmentDateAvailability:", error);
+      setError("Error checking appointment date availability. Please try again.");
+      return false; 
+    }
   };
 
   const submitToApi = async () => {
     try {
-      formData.appointment_date = new Date(formData.appointment_date).toISOString();
+      if (formData.appointment_date) {
+        formData.appointment_date = new Date(formData.appointment_date).toISOString();
+      }
+
       const response = await fetch("https://dinosaur.prakasitj.com/patient/addPatient", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Full error response:", errorData); // Log the complete error data
+        console.error("Full error response:", errorData); 
         setError(errorData.message || "Failed to add patient data.");
         return;
       }
-  
+
       navigate("/listViewPatient");
     } catch (err) {
       setError("Error submitting data. Please try again.");
-      console.error("Request error:", err); // Log any request-related errors
+      console.error("Request error:", err); 
     }
   };
-  
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
 
-    submitToApi(); // Call the function to send data to the API
+    // Only check availability if the appointment date is provided
+    const isAvailable = formData.appointment_date 
+      ? await checkAppointmentDateAvailability(new Date(formData.appointment_date).toISOString())
+      : false;
+
+    if (isAvailable) {
+      setError("The selected appointment date is already taken. Please choose a different date.");
+      return; 
+    }
+
+    submitToApi(); 
   };
 
   return (
@@ -168,13 +201,12 @@ function AddNewPatient() {
                 value={formData.appointment_date}
                 onChange={handleChange}
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
-                required
               />
             </div>
 
             <div className="mb-4">
               <label htmlFor="course_count" className="block mb-1">
-                Course:
+                Course Count:
               </label>
               <input
                 type="number"
