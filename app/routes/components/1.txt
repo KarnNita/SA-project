@@ -81,22 +81,18 @@ export default function TreatmentCard({ treatment, item1, item2, item3, onTreatm
 
   const handleDoctorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDoctor(parseInt(e.target.value, 10));
-    sessionStorage.setItem("chosenDoctor", JSON.stringify(doctor));
   };
 
   const handleItem1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
     setItem1Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item1Stored", JSON.stringify(item1Count));
   };
 
   const handleItem2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
     setItem2Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item2Stored", JSON.stringify(item2Count));
   };
 
   const handleItem3Change = (e: React.ChangeEvent<HTMLInputElement>) => {
     setItem3Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item3Stored", JSON.stringify(item3Count));
   };
 
   // Filter staff list to include only those with the role "Doctor"
@@ -134,48 +130,4 @@ export default function TreatmentCard({ treatment, item1, item2, item3, onTreatm
         </div>
       </div>
 
-      <div className="flex flex-row justify-center items-center gap-2">
-        <div className="grid">
-          <input
-            type="checkbox"
-            checked={checked}
-            onChange={handleCheckboxChange}
-            className="w-4 h-4 appearance-none border-2 border-white rounded-[0.2rem] checked:bg-white checked:border-transparent focus:outline-none shadow-inner col-start-1 row-start-1"
-          />
-          <svg
-            className={`col-start-1 row-start-1 ml-[0.1rem] ${checked ? "visible" : "invisible"}`}
-            xmlns="http://www.w3.org/2000/svg"
-            x="0px"
-            y="0px"
-            width="13"
-            height="15"
-            viewBox="0 0 30 30"
-            style={{ pointerEvents: "none" }}
-          >
-            <path d="M 26.980469 5.9902344 A 1.0001 1.0001 0 0 0 26.292969 6.2929688 L 11 21.585938 L 4.7070312 15.292969 A 1.0001 1.0001 0 1 0 3.2929688 16.707031 L 10.292969 23.707031 A 1.0001 1.0001 0 0 0 11.707031 23.707031 L 27.707031 7.7070312 A 1.0001 1.0001 0 0 0 26.980469 5.9902344 z"></path>
-          </svg>
-        </div>
-        <h1 className="pb-1">Select</h1>
-      </div>
-    </div>
-  );
-}
-
-interface InputRowProps {
-  text: string;
-  item: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-function InputRow({ text, item, onChange }: InputRowProps) {
-  return (
-    <div className="flex flex-row gap-2">
-      {text !== "" ? <h1>{text}</h1> : <div className="mr-[1.6352rem]"></div>}
-
-      <div className="flex flex-row bg-white rounded-3xl w-[12rem] justify-center">
-        <h1>{item}</h1>
-      </div>
-      <input className="rounded-3xl w-[12rem]" type="number" onChange={onChange} />
-    </div>
-  );
-}
+      <div className="flex flex-row justify-center items

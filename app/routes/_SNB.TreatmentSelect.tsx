@@ -3,23 +3,22 @@ import { useNavigate } from '@remix-run/react';
 import TreatmentCard from "./components/TreatmentCard";
 import PatientHeader from "./components/PatientHeader";
 
-interface Staff {
-  staff_id: number;
-  username: string;
-  staff_name: string;
-  staff_phone_number: string;
-  birthday: string;
-  gender: string;
-  role: string;
-  email: string;
+interface Treatment {
+  treatment_id: number;
+  cost: number;
+  treatment_name: string;
+  item1: number;
+  item2: number;
+  item3: number;
+  doctor: number;
 }
 
 const TreatmentSelect: React.FC = () => {
-  const [selectedTreatments, setSelectedTreatments] = useState<string[]>([]);
+  const [selectedTreatments, setSelectedTreatments] = useState<Treatment[]>([]);
   const [treatmentList, setTreatmentList] = useState<{ treatment_id: number; cost: number; treatment_name: string; }[]>([]);
   const navigate = useNavigate();
   const [currentPatient, setCurrentPatient] = useState<string>("Guest");
-  const [staffList, setStaffList] = useState<Staff[]>([]);
+  const [currentPatientName, setCurrentPatientName] = useState<string>("Guest");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,11 +38,29 @@ const TreatmentSelect: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleTreatmentSelect = (treatmentName: string, isSelected: boolean) => {
+  useEffect(() => {
+    const fetchPatientData = async () => {
+      if (currentPatient !== "Guest") {
+        const patientResponse = await fetch(`https://dinosaur.prakasitj.com/patient/getNamebyID/${currentPatient}`);
+        const patientData = await patientResponse.json();
+        
+        // Check if patientData is an array and has at least one element
+        if (Array.isArray(patientData) && patientData.length > 0) {
+          setCurrentPatientName(patientData[0].name_surname); // Access the first object in the array
+        } else {
+          setCurrentPatientName("Guest");
+        }
+      }
+    };
+    fetchPatientData();
+  }, [currentPatient]);
+  
+
+  const handleTreatmentSelect = (treatment: Treatment, isSelected: boolean) => {
     setSelectedTreatments((prev) =>
       isSelected
-        ? [...prev, treatmentName] // Add treatment if selected
-        : prev.filter((t) => t !== treatmentName) // Remove treatment if deselected
+        ? [...prev, treatment] // Add treatment if selected
+        : prev.filter((t) => t.treatment_id !== treatment.treatment_id) // Remove treatment if deselected
     );
   };
 
@@ -59,13 +76,13 @@ const TreatmentSelect: React.FC = () => {
           <h1 className="text-[#1FA1AF] text-2xl">Treatment Select</h1>
         </div>
 
-        <PatientHeader patientName={currentPatient} patientID={currentPatient}/>
+        <PatientHeader patientName={currentPatientName} patientID={currentPatient} />
 
         <div className="flex flex-col gap-[0.65rem] mt-5">
           {treatmentList.map((treatment) => (
             <TreatmentCard
               key={treatment.treatment_id}
-              treatmentName={treatment.treatment_name} // Pass treatment_name to TreatmentCard
+              treatment={treatment}
               item1="Needle size 1"
               item2="Needle size 2"
               item3="Cotton"

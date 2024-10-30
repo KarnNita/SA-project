@@ -17,7 +17,7 @@ export default function PatientHeader({patientName, patientID}: PatientHeaderPro
           <span className="text-[#000000] text-xl font-semibold">
             {patientName}
           </span>
-          <span className="text-[#000000] text-lg">{patientID}</span>
+          <span className="text-[#000000] text-lg">Patient ID: {patientID}</span>
         </div>
 
       </div>
