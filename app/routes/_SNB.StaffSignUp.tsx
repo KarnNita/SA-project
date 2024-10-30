@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate } from "@remix-run/react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
 function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     staff_name: "",
@@ -13,25 +14,10 @@ function SignUp() {
     password: "",
     confirmPassword: "",
   });
-
-  const navigate = useNavigate();
-  const [error, setError] = useState<string | null>(null);
-  const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
   
-  useEffect(() => {
-    const checkUsername = async () => {
-      if (formData.username) {
-        await checkUsernameAvailability(formData.username);
-      }
-    };
-
-    const handler = setTimeout(checkUsername, 500);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [formData.username]);
-
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -40,21 +26,25 @@ function SignUp() {
     }));
   };
 
-  const checkUsernameAvailability = async (username: string) => {
+  const checkUsernameAvailability = async () => {
     try {
-      const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${username}`);
-      const data = await response.json();
-
-      if (data.length > 0) {
-        setUsernameAvailable(false);
-        setError("Username is already taken. Please choose another one.");
-      } else {
-        setUsernameAvailable(true);
-        setError(null);
+      const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${formData.username}`);
+      if (!response.ok) {
+        throw new Error("Error checking username availability");
       }
-    } catch (err) {
-      console.error("Error checking username availability:", err);
-      setError("Failed to check username availability. Please try again.");
+
+      const data = await response.json();
+      if (data.length > 0) {
+        setError("Username already taken. Please choose another username.");
+        return false;
+      }
+
+      setError(null); 
+      return true;
+    } catch (error) {
+      setError("Error checking username availability. Please try again.");
+      console.error(error);
+      return false;
     }
   };
 
@@ -85,29 +75,26 @@ function SignUp() {
       return false;
     }
 
-    setError(null);
+    setError(null); 
     return true;
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Capitalize the first letter of gender
+    if (!validateForm()) return;
+
+    const isUsernameAvailable = await checkUsernameAvailability();
+    if (!isUsernameAvailable) return;
+
     const formattedGender = formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1);
 
-    // Create a new form data object with the formatted gender
     const dataToSubmit = {
       ...formData,
       gender: formattedGender,
     };
 
-    if (!usernameAvailable) {
-      return; 
-    }
-
-    if (!validateForm()) return;
-
-    await submitToApi(dataToSubmit); // Pass the formatted data to the API submission
+    await submitToApi(dataToSubmit); 
   };
 
   const submitToApi = async (data: typeof formData) => {
@@ -135,7 +122,7 @@ function SignUp() {
   return (
     <div className="flex flex-row w-[78svw]">
       <div className="flex flex-row justify-center items-start w-[75svw] pt-10 pb-7">
-        <div className="p-6 border border-gray-300 h-[115svh] rounded-3xl bg-white shadow-lg w-[40svw]">
+        <div className="p-6 border border-gray-300 h-[125svh] rounded-3xl bg-white shadow-lg w-[40svw]">
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Sign up new staff</h1>
           </div>
@@ -154,7 +141,6 @@ function SignUp() {
                 className="w-full py-2 px-3 bg-gray-300 text-sm rounded-3xl"
                 required
               />
-              {!usernameAvailable && <p className="text-red-500">{error}</p>}
             </div>
 
             <div className="mb-4">
@@ -283,15 +269,16 @@ function SignUp() {
               />
             </div>
 
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-500 mb-4">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={!usernameAvailable}
-              className="absolute right-28 top-[115%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
-            >
-              Save
-            </button>
+            <div className="flex justify-center mt-auto">
+              <button
+                type="submit"
+                className="w-1/2 py-2 px-4 bg-[#1FA1AF] text-white rounded-3xl"
+              >
+                Sign Up
+              </button>
+            </div>
           </form>
         </div>
       </div>
