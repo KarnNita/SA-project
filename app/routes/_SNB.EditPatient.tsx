@@ -8,16 +8,16 @@ interface Patient {
   birthday: string;
   gender: string;
   course_count: number;
-  appointment_date: string;
+  appointment_date: string | null;
   first_visit_date: string;
 }
 
 function EditPatient() {
   const navigate = useNavigate();
   const [patientData, setPatientData] = useState<Patient | null>(null);
-  const [formData, setFormData] = useState<Partial<Patient>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState<Partial<Patient>>({});
 
   useEffect(() => {
     const fetchPatientData = async () => {
@@ -41,8 +41,6 @@ function EditPatient() {
         }
 
         const data = await response.json();
-        console.log("Fetched data:", data);
-
         if (data.length > 0) {
           setPatientData(data[0]);
           setFormData(data[0]);
@@ -67,19 +65,51 @@ function EditPatient() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-
     const newValue = name === "course_count" ? parseInt(value, 10) : value;
 
     if (name === "appointment_date") {
-      const dateValue = new Date(value).toISOString();
+      const dateValue = value ? new Date(value).toISOString() : null;
       setFormData((prev) => ({ ...prev, [name]: dateValue }));
+      setError(null);
     } else {
       setFormData((prev) => ({ ...prev, [name]: newValue }));
     }
   };
 
+  const checkAppointmentDateAvailability = async (appointment_date: string) => {
+    try {
+      const response = await fetch(`https://dinosaur.prakasitj.com/patient/searchbyAppointmentDate/${appointment_date}`);
+      
+      if (!response.ok) {
+        const errorDetails = await response.text(); 
+        throw new Error(`Failed to check appointment date: ${errorDetails}`);
+      }
+
+      const result = await response.json();
+      console.log("Response from searchbyAppointmentDate:", result); 
+
+      return result.length > 0; 
+    } catch (error) {
+      console.error("Error in checkAppointmentDateAvailability:", error);
+      setError("Error checking appointment date availability. Please try again.");
+      return false;
+    }
+  };
+
   const handleSave = async () => {
-    if (!formData.patient_id) return;
+    if (!formData.appointment_date) {
+      setError("Please select an appointment date.");
+      return;
+    }
+
+    const isAvailable = await checkAppointmentDateAvailability(
+      new Date(formData.appointment_date).toISOString()
+    );
+
+    if (isAvailable) {
+      setError("The selected appointment date is already taken. Please choose a different date.");
+      return; 
+    }
 
     try {
       const response = await fetch(
@@ -103,8 +133,7 @@ function EditPatient() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p>Loading...</p>; // Show loading state
 
   return (
     <div className="flex flex-row h-[100svh] bg-[#DCE8E9] ml-20">
@@ -118,7 +147,7 @@ function EditPatient() {
           <h1 className="text-[#2F919C] text-3xl">Edit Patient</h1>
         </div>
 
-        <form className="flex flex-col gap-2.5">
+        <form className="flex flex-col gap-2.5" onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
           <div>
             <label htmlFor="patient_id" className="block mb-1 text-lg">
               Patient ID:
@@ -216,8 +245,8 @@ function EditPatient() {
               }
               onChange={handleChange}
               className="w-[70svh] py-2 px-3 bg-gray-300 text-sm rounded-full"
-              required
             />
+            {error && formData.appointment_date && <p className="text-red-500">{error}</p>} 
           </div>
 
           <div>
@@ -234,12 +263,13 @@ function EditPatient() {
               required
             />
           </div>
+
           <button
             onClick={handleSave}
             type="button"
             className="bg-[#2F919C] text-white font-semibold py-2 px-6
-                    h-[50px] w-[14svh] rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
-                    hover:bg-[#236971] transition-all text-xl ml-[35svw]"
+                h-[50px] w-[14svh] rounded-lg shadow-[0px_4px_4px_rgba(0,0,0,0.25)]
+                hover:bg-[#236971] transition-all text-xl ml-[35svw]"
           >
             Save
           </button>
