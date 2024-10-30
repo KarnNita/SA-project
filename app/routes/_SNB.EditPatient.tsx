@@ -8,7 +8,7 @@ interface Patient {
   birthday: string;
   gender: string;
   course_count: number;
-  appointment_date: string; // Keep it as string to handle input correctly
+  appointment_date: string;
   first_visit_date: string;
 }
 
@@ -68,12 +68,9 @@ function EditPatient() {
   ) => {
     const { name, value } = e.target;
 
-    // Parse course_count to an integer
     const newValue = name === "course_count" ? parseInt(value, 10) : value;
 
-    // Convert date format for appointment_date
     if (name === "appointment_date") {
-      // Format the appointment date to a consistent format
       const dateValue = new Date(value).toISOString();
       setFormData((prev) => ({ ...prev, [name]: dateValue }));
     } else {

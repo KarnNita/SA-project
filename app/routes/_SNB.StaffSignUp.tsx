@@ -1,7 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent} from "react";
 import { useNavigate } from "@remix-run/react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
 function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     staff_name: "",
@@ -13,12 +14,11 @@ function SignUp() {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -26,44 +26,35 @@ function SignUp() {
     }));
   };
 
-  const submitToApi = async () => {
+  const checkUsernameAvailability = async () => {
     try {
-      const response = await fetch("https://dinosaur.prakasitj.com/staff/addStaff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-  
+      const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${formData.username}`);
       if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Full error response:", errorData); // Log the complete error data
-        setError(errorData.message || "Failed to add patient data.");
-        return;
+        throw new Error("Error checking username availability");
       }
-  
-      navigate("/staffListView");
-    } catch (err) {
-      setError("Error submitting data. Please try again.");
-      console.error("Request error:", err); // Log any request-related errors
+
+      const data = await response.json();
+      if (data.length > 0) {
+        setError("Username already taken. Please choose another username.");
+        return false;
+      }
+
+      setError(null); 
+      return true;
+    } catch (error) {
+      setError("Error checking username availability. Please try again.");
+      console.error(error);
+      return false;
     }
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    submitToApi(); // Call the function to send data to the API
-  };
-  
   const validateForm = () => {
-    const { staff_phone_number, birthday, email} = formData;
+    const { staff_phone_number, birthday, email, password, confirmPassword } = formData;
     const telRegex = /^\d{10}$/;
-    const isValidEmail =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!isValidEmail) {
-      setError("Your email is not the right pattern.");
+    if (!emailRegex.test(email)) {
+      setError("Your email is not in the correct format.");
       return false;
     }
 
@@ -79,16 +70,61 @@ function SignUp() {
       return false;
     }
 
+    if (password !== confirmPassword) {
+      setError("Passwords do not match. Please try again.");
+      return false;
+    }
+
+    setError(null); 
     return true;
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    const isUsernameAvailable = await checkUsernameAvailability();
+    if (!isUsernameAvailable) return;
+
+    const formattedGender = formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1);
+
+    const dataToSubmit = {
+      ...formData,
+      gender: formattedGender,
+    };
+
+    await submitToApi(dataToSubmit); 
+  };
+
+  const submitToApi = async (data: typeof formData) => {
+    try {
+      const response = await fetch("https://dinosaur.prakasitj.com/staff/addStaff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Full error response:", errorData);
+        setError(errorData.message || "Failed to add staff data.");
+        return;
+      }
+
+      navigate("/staffListView");
+    } catch (err) {
+      setError("Error submitting data. Please try again.");
+      console.error("Request error:", err);
+    }
   };
 
   return (
     <div className="flex flex-row w-[78svw]">
       <div className="flex flex-row justify-center items-start w-[75svw] pt-10 pb-7">
-        <div className="p-6 border border-gray-300 h-[115svh] rounded-3xl bg-white shadow-lg w-[40svw]">
+        <div className="p-6 border border-gray-300 h-[125svh] rounded-3xl bg-white shadow-lg w-[40svw]">
           <div className="flex flex-row justify-between mb-6">
             <h1 className="text-[#1FA1AF] text-2xl">Sign up new staff</h1>
-            <div className="flex flex-row items-center"></div>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -165,8 +201,8 @@ function SignUp() {
                 required
               >
                 <option value="">Select Gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
               </select>
             </div>
 
@@ -233,14 +269,16 @@ function SignUp() {
               />
             </div>
 
-            {error && <p className="text-red-500">{error}</p>}
+            {error && <p className="text-red-500 mb-4">{error}</p>}
 
-            <button
-              type="submit"
-              className="absolute right-28 top-[115%] transform -translate-y-1/2 w-36 py-2 bg-[#1FA1AF] text-white font-bold rounded-lg"
-            >
-              Save
-            </button>
+            <div className="flex justify-center mt-auto">
+              <button
+                type="submit"
+                className="w-1/2 py-2 px-4 bg-[#1FA1AF] text-white rounded-3xl"
+              >
+                Sign Up
+              </button>
+            </div>
           </form>
         </div>
       </div>
