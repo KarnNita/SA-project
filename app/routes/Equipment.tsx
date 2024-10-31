@@ -109,16 +109,16 @@ const getImageForEquipment = (name: string) => {
 
 const styles = {
   container: {
-    width: '100%', // เปลี่ยนเป็น 100% เพื่อให้เต็มหน้าจอ
+    width: '100%', 
     backgroundColor: '#F2F8F7',
     display: 'flex',
-    justifyContent: 'center',
+    padding: '40px',
     alignItems: 'center',
     flexDirection: 'column' as const,
   } as React.CSSProperties,
   card: {
     width: '1061px',
-    height: 'auto', // เปลี่ยนเป็น auto เพื่อให้ยืดหยุ่นตามเนื้อหา
+    height: 'auto', 
     backgroundColor: '#FFFFFF',
     borderRadius: '15px',
     boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
