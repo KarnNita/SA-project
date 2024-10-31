@@ -9,6 +9,10 @@ import { FaClipboardList } from "react-icons/fa";
 function SideNavBar() {
   const navigate = useNavigate(); // สร้างฟังก์ชันนำทาง
   const [currentUser, setCurrentUser] = React.useState('Guest');
+  
+  const handleLogOut = () => {
+    navigate("/logIn");
+  };
 
   React.useEffect(() => {
     setCurrentUser(sessionStorage.getItem('currentUser') || 'Guest');
@@ -78,7 +82,8 @@ function SideNavBar() {
         </nav>
 
         <div className="pt-12 pl-6 pr-6">
-          <button className="w-full py-2 bg-white rounded-lg text-[#1FA1AF]">
+          <button className="w-full py-2 bg-white rounded-lg text-[#1FA1AF]"
+          onClick={handleLogOut}>
             LOG OUT
           </button>
         </div>
