@@ -21,6 +21,10 @@ function MedicalRecord() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,8 +51,9 @@ function MedicalRecord() {
 
   const [searchTerm, setSearchTerm] = React.useState<string>("");
 
-  const filteredRecord = medicalData.filter(
-    (medicalData: MedicalRecordList) => medicalData
+  const filteredRecord = medicalData.filter((medical)=>
+    medical.cost.toString().includes(searchTerm) ||
+    medical.record_id.toString().includes(searchTerm)
   );
 
   if (loading) return <p>Loading...</p>;
@@ -70,6 +75,7 @@ function MedicalRecord() {
               type="text"
               placeholder="Search..."
               className="border-2 border-gray-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onChange={handleSearch}
             />
           </div>
         </div>

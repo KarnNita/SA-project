@@ -80,24 +80,44 @@ export default function TreatmentCard({ treatment, item1, item2, item3, onTreatm
   };
 
   const handleDoctorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setDoctor(parseInt(e.target.value, 10));
-    sessionStorage.setItem("chosenDoctor", JSON.stringify(doctor));
-  };
+    const selectedDoctorId = parseInt(e.target.value, 10);
+    setDoctor(selectedDoctorId);
+
+    // Retrieve the existing doctor list from sessionStorage, or start with an empty array if none
+    const storedDoctors = JSON.parse(sessionStorage.getItem("chosenDoctors") || "[]");
+
+    // Add the selected doctor if not already in the list
+    if (!storedDoctors.includes(selectedDoctorId)) {
+        storedDoctors.push(selectedDoctorId);
+    }
+
+    if (storedDoctors.length > 1) {
+        storedDoctors.shift(); // Remove the oldest doctor
+    }
+
+    // Save the updated doctor list to sessionStorage
+    sessionStorage.setItem("chosenDoctors", JSON.stringify(storedDoctors));
+};
+
 
   const handleItem1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setItem1Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item1Stored", JSON.stringify(item1Count));
-  };
+    const newValue = parseInt(e.target.value);
+    setItem1Count(newValue);
+    sessionStorage.setItem("item1Stored", JSON.stringify(newValue));
+};
 
-  const handleItem2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setItem2Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item2Stored", JSON.stringify(item2Count));
-  };
+const handleItem2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value);
+    setItem2Count(newValue);
+    sessionStorage.setItem("item2Stored", JSON.stringify(newValue));
+};
 
-  const handleItem3Change = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setItem3Count(parseInt(e.target.value, 10));
-    sessionStorage.setItem("item3Stored", JSON.stringify(item3Count));
-  };
+const handleItem3Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = parseInt(e.target.value);
+    setItem3Count(newValue);
+    sessionStorage.setItem("item3Stored", JSON.stringify(newValue));
+};
+
 
   // Filter staff list to include only those with the role "Doctor"
   const doctorList = staffList.filter((staff) => staff.role === "Doctor");
@@ -110,7 +130,7 @@ export default function TreatmentCard({ treatment, item1, item2, item3, onTreatm
       >
         <img
           className="object-cover w-full h-full rounded-3xl"
-          src={"https://www.petlandflorida.com/wp-content/uploads/2022/04/shutterstock_1290320698-1-scaled.jpg"}
+          src={"https://media.istockphoto.com/id/1319031310/th/%E0%B8%A3%E0%B8%B9%E0%B8%9B%E0%B8%96%E0%B9%88%E0%B8%B2%E0%B8%A2/%E0%B9%81%E0%B8%9E%E0%B8%97%E0%B8%A2%E0%B9%8C%E0%B9%80%E0%B8%82%E0%B8%B5%E0%B8%A2%E0%B8%99%E0%B9%83%E0%B8%9A%E0%B8%AA%E0%B8%B1%E0%B9%88%E0%B8%87%E0%B8%A2%E0%B8%B2.jpg?s=1024x1024&w=is&k=20&c=sMJ1Y2oVo5wkwQ0nqp63svGD8MVSyb2s0FNDiXBCMrg="}
           alt="Treatment"
         />
       </div>

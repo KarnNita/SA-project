@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from 'date-fns';
+import React from "react";
 
 interface FinancialRecord {
   financial_record_id: number;
@@ -15,6 +16,22 @@ function IncomeExpenses() {
   const [expensesData, setExpensesData] = useState<FinancialRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [searchTerm, setSearchTerm] = React.useState<string>("");
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredIncome = incomeData.filter((income)=>
+    income.cost.toString().includes(searchTerm) ||
+    income.record_date.toString().includes(searchTerm)
+  );
+
+  const filteredExpense = expensesData.filter((expenses)=>
+    expenses.cost.toString().includes(searchTerm) ||
+    expenses.record_date.toString().includes(searchTerm)
+  );
 
   const fetchFinancialRecords = async (tab: string) => {
     setLoading(true);
@@ -73,6 +90,7 @@ function IncomeExpenses() {
               type="text"
               placeholder="Search..."
               className="border-2 border-gray-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              onChange={handleSearch}
             />
           </div>
         </div>
@@ -109,7 +127,7 @@ function IncomeExpenses() {
             <th className="px-8 py-2">Staff ID</th>
             
             <tbody>
-              {(activeTab === "Income" ? incomeData : expensesData).map(
+              {(activeTab === "Income" ? filteredIncome : filteredExpense).map(
                 (record) => (
                   <tr key={record.financial_record_id} className="border-b">
                     <td className="pl-24 py-2" style={{ borderBottom: "1px solid white" }}>{record.financial_record_id}</td>
