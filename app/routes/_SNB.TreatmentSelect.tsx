@@ -66,7 +66,12 @@ const TreatmentSelect: React.FC = () => {
 
   const handleNextPage = () => {
     sessionStorage.setItem("selectedTreatments", JSON.stringify(selectedTreatments));
-    navigate("/totalCost");
+    if (selectedTreatments.length != 0) {
+      navigate("/totalCost");
+    }
+    else {
+      navigate('/treatmentSelect');
+    }
   };
 
   return (
