@@ -15,6 +15,7 @@ import EditStaff from './_SNB.EditStaff';
 import EditPatient from './_SNB.EditPatient';
 import PatientDetail from './_SNB.PatientDetail';
 import LogIn from './LogIn';
+import StaffSignUp from './_SNB.StaffSignUp';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
         <Route path="/patientDetail" element={<PatientDetail />} />
         <Route path="/treatmentSelect" element={<TreatmentSelect />} />
         <Route path="/logIn" element={<LogIn/>}/>
+        <Route path="/staffSignUp" element={<StaffSignUp/>}/>
       </Routes>
     </Router>
   );

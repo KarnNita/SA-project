@@ -16,6 +16,8 @@ const Equipment: React.FC = () => {
   const [equipmentItems, setEquipmentItems] = useState<EquipmentItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isManager, setIsManager] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<string>("Guest");
 
   const handleHistoryClick = () => {
     navigate("/equipmentHistory");
@@ -40,6 +42,39 @@ const Equipment: React.FC = () => {
     fetchEquipment();
   }, []);
 
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const currentStaffValue = currentUser ? currentUser.replace(/^"|"$/g, '').toLowerCase() : "guest";
+      setCurrentUser(currentStaffValue);
+
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentUser}`
+        );
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0 ) {
+          console.log(data[0].role);
+        } else {
+          console.error("No staff found.");
+        }
+        
+        if (data[0].role.replace(/^"|"$/g, '').toLowerCase() === "manager") {
+          setIsManager(true);
+        }
+    };
+    fetchStaffData();
+  }, [currentUser]);
+
+  const handleEditEquipment = () => {
+    if (isManager) {
+      navigate("/editEquipment");
+    }
+    else {
+      alert("You don't have access to edit.")
+    }
+  };
+  
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
@@ -54,11 +89,9 @@ const Equipment: React.FC = () => {
               <button style={styles.historyButton} onClick={handleHistoryClick}>
                 <div style={styles.icon}></div>Equipment history
               </button>
-              <Link to="/EditEquipment">
-                <button style={styles.editButton}>
+              <button style={styles.editButton} onClick={handleEditEquipment}>
                   <div style={styles.icon}></div>Edit Equipment
                 </button>
-              </Link>
             </div>
           </div>
           <div style={styles.equipmentCard}>

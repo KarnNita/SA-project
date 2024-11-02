@@ -21,6 +21,8 @@ const StaffListView: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [isManager, setIsManager] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<string>("Guest");
 
   const navigate = useNavigate();
 
@@ -46,6 +48,30 @@ const StaffListView: React.FC = () => {
     fetchData();
   }, []); // Empty dependency array to fetch data on mount
 
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      const currentUser = sessionStorage.getItem("currentUser");
+      const currentStaffValue = currentUser ? currentUser.replace(/^"|"$/g, '').toLowerCase() : "guest";
+      setCurrentUser(currentStaffValue);
+
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentUser}`
+        );
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0 ) {
+          console.log(data[0].role);
+        } else {
+          console.error("No staff found.");
+        }
+        
+        if (data[0].role.replace(/^"|"$/g, '').toLowerCase() === "manager") {
+          setIsManager(true);
+        }
+    };
+    fetchStaffData();
+  }, [currentUser]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -59,12 +85,22 @@ const StaffListView: React.FC = () => {
   );
 
   const handleEditStaff = (username: string) => {
-    sessionStorage.setItem("currentStaff", JSON.stringify(username));
-    navigate("/editStaff");
+    if (isManager) {
+      sessionStorage.setItem("currentStaff", JSON.stringify(username));
+      navigate("/editStaff");
+    }
+    else {
+      alert("You don't have access to edit.")
+    }
   };
 
   const handleAddNewStaff = () => {
-    navigate("/StaffSignUp");
+    if (isManager) {
+      navigate("/staffSignUp");
+    }
+    else {
+      alert("You don't have access to add.")
+    }
   };
 
   const handleClickList = (currentStaff: string) => {
