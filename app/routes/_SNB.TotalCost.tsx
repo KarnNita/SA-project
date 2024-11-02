@@ -317,13 +317,6 @@ const TotalCost: React.FC = () => {
         } catch (error) {
           console.error("Network or server error:", error);
         }
-        
-        // if (!responsePatientUpdate.ok) {
-        //   const errorData = await responsePatientUpdate.json();
-        //   console.error("Failed to update patient data:", errorData);
-        // } else {
-        //   console.log("Patient data updated successfully.");
-        // }
       }
 
       sessionStorage.setItem("item1Stored", "0");
@@ -387,10 +380,11 @@ const TotalCost: React.FC = () => {
             <div className="flex flex-col w-[30svw] bg-[#DCE8E9] rounded-3xl text-start h-36">
               <input
                 type="datetime-local"
+                
                 className="w-[20svw] my-5 mx-5 rounded-md"
                 onChange={handleChange}
                 style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)"
-
+                
                  }}
               />
               <h1 className="ml-5">Date of treatment</h1>

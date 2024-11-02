@@ -102,11 +102,11 @@ function EditPatient() {
       return;
     }
 
-    const isAvailable = await checkAppointmentDateAvailability(
+    const isNotAvailable = await checkAppointmentDateAvailability(
       new Date(formData.appointment_date).toISOString()
     );
 
-    if (isAvailable) {
+    if (isNotAvailable) {
       setError("The selected appointment date is already taken. Please choose a different date.");
       return; 
     }
