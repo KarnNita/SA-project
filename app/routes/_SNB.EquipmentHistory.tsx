@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import Equipment from "./Equipment";
 
 interface EquipmentRequisition {
   requisition_id: number;
@@ -25,6 +26,7 @@ function EquipmentHistory() {
   const [stockList, setStockList] = useState<EquipmentStock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +59,20 @@ function EquipmentHistory() {
     fetchData();
   }, []);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const filteredRequisition = requisitionList.filter((requisition)=>
+    requisition.requisition_id.toString().includes(searchTerm) ||
+    requisition.equipment_id.toString().includes(searchTerm)
+  );
+
+  const filteredStock = stockList.filter((stock)=>
+    stock.stock_in_id.toString().includes(searchTerm) ||
+    stock.equipment_id.toString().includes(searchTerm)
+  );
+
   const renderTableData = () => {
     if (loading)
       return (
@@ -71,7 +87,7 @@ function EquipmentHistory() {
         </tr>
       );
 
-    const data = activeTab === "Use Equipment" ? requisitionList : stockList;
+    const data = activeTab === "Use Equipment" ? filteredRequisition : filteredStock;
 
     return data.map((record) => (
       <tr
@@ -134,6 +150,7 @@ function EquipmentHistory() {
             <input
               type="text"
               placeholder="Search..."
+              onChange={handleSearch}
               className="border-2 border-gray-300 rounded-full py-2 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
