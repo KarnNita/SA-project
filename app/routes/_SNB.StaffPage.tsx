@@ -23,7 +23,7 @@ function StaffPage() {
   useEffect(() => {
     const fetchData = async () => {
       const storedStaff = sessionStorage.getItem("currentStaff");
-      const currentStaffValue = storedStaff ? storedStaff.replace(/^"|"$/g, '') : "Guest";
+      const currentStaffValue = storedStaff ? storedStaff.replace(/^"|"$/g, '').toLowerCase() : "guest";
       setCurrentStaff(currentStaffValue);
 
       if (currentStaffValue === "Guest") {

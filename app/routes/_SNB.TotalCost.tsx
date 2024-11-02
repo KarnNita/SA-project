@@ -43,13 +43,18 @@ const TotalCost: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [selectedTreatments, setSelectedTreatments] = useState<Finance[]>([]);
   const [patientData, setPatientData] = useState<Patient | null>(null);
-
+  const [formData, setFormData] = useState<Partial<Patient>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [appointmentDate, setAppointmentDate] = useState<string | null>(null);
+  const [newAppointmentDate, setNewAppointmentDate] = useState<string>("");
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const user = sessionStorage.getItem("currentUser");
-    const treatments = JSON.parse(sessionStorage.getItem("selectedTreatments") || "[]");
+    const treatments = JSON.parse(
+      sessionStorage.getItem("selectedTreatments") || "[]"
+    );
     setCurrentUser(user);
     setSelectedTreatments(treatments);
   }, []);
@@ -57,7 +62,9 @@ const TotalCost: React.FC = () => {
   useEffect(() => {
     const fetchStaffData = async () => {
       if (currentPatient !== "Guest" && currentUser) {
-        const response = await fetch(`https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentUser}`);
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentUser}`
+        );
         const data = await response.json();
 
         if (Array.isArray(data) && data.length > 0) {
@@ -76,19 +83,27 @@ const TotalCost: React.FC = () => {
 
       try {
         const requests = selectedTreatments.map((treatment) =>
-          fetch(`https://dinosaur.prakasitj.com/treatmenttype/searchbyName/${treatment.treatment_name.toLowerCase().replace(/ /g, "")}`)
-            .then(response => response.json())
+          fetch(
+            `https://dinosaur.prakasitj.com/treatmenttype/searchbyName/${treatment.treatment_name
+              .toLowerCase()
+              .replace(/ /g, "")}`
+          ).then((response) => response.json())
         );
 
         const results = await Promise.all(requests);
         const mergedData = results.flat();
         setFinanceList(mergedData);
 
-        const calculatedBaseTotalCost = mergedData.reduce((acc, item) => acc + item.cost, 0);
+        const calculatedBaseTotalCost = mergedData.reduce(
+          (acc, item) => acc + item.cost,
+          0
+        );
         setBaseTotalCost(calculatedBaseTotalCost);
 
         const storedPatientID = sessionStorage.getItem("currentPatientID");
-        setCurrentPatient(storedPatientID ? storedPatientID.replace(/^"|"$/g, "") : "Guest");
+        setCurrentPatient(
+          storedPatientID ? storedPatientID.replace(/^"|"$/g, "") : "Guest"
+        );
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -101,7 +116,9 @@ const TotalCost: React.FC = () => {
   useEffect(() => {
     const fetchPatientData = async () => {
       if (currentPatient !== "Guest") {
-        const response = await fetch(`https://dinosaur.prakasitj.com/patient/getNamebyID/${currentPatient}`);
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/patient/getNamebyID/${currentPatient}`
+        );
         const data = await response.json();
 
         if (Array.isArray(data) && data.length > 0) {
@@ -118,7 +135,9 @@ const TotalCost: React.FC = () => {
   useEffect(() => {
     const fetchCourseData = async () => {
       if (currentPatient !== "Guest") {
-        const response = await fetch(`https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`);
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`
+        );
         const data = await response.json();
 
         if (Array.isArray(data) && data.length > 0) {
@@ -133,14 +152,18 @@ const TotalCost: React.FC = () => {
   }, [currentPatient]);
 
   useEffect(() => {
-    const storedEquipmentData = JSON.parse(sessionStorage.getItem("equipmentData") || "[]");
-    
-    const initialEquipmentList: Equipment[] = storedEquipmentData.map((item: any) => ({
-      equipment_id: item.equipment_id,
-      equipment_name: item.equipment_name,
-      price: item.price,
-      amount: item.amount,
-    }));
+    const storedEquipmentData = JSON.parse(
+      sessionStorage.getItem("equipmentData") || "[]"
+    );
+
+    const initialEquipmentList: Equipment[] = storedEquipmentData.map(
+      (item: any) => ({
+        equipment_id: item.equipment_id,
+        equipment_name: item.equipment_name,
+        price: item.price,
+        amount: item.amount,
+      })
+    );
 
     setEquipmentList(initialEquipmentList);
   }, []);
@@ -157,186 +180,273 @@ const TotalCost: React.FC = () => {
     }
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    // const { name, value } = e.target;
-    // setFormData((prevData) => ({
-    //   ...prevData,
-    //   [name]: name === "course_count" ? Number(value) : value,
-      
-    // }));
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "appointment_date") {
+      setNewAppointmentDate(value); // Set new appointment date
+    }
+    console.log("New Appointment Date:", newAppointmentDate); // Add this line for debugging
+  };
+
+  const checkAppointmentDateAvailability = async (appointment_date: string) => {
+    try {
+      const response = await fetch(
+        `https://dinosaur.prakasitj.com/patient/searchbyAppointmentDate/${appointment_date}`
+      );
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Failed to check appointment date: ${errorDetails}`);
+      }
+
+      const result = await response.json();
+      console.log("Response from searchbyAppointmentDate:", result);
+
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error in checkAppointmentDateAvailability:", error);
+      setError(
+        "Error checking appointment date availability. Please try again."
+      );
+      return false;
+    }
   };
 
   const totalCost = baseTotalCost;
 
   const handleDone = async () => {
-    try {
-      const financeFormData = {
-        record_date: new Date().toISOString(),
-        income_and_expenses: "income",
-        cost: totalCost,
-        staff_id: currentStaffId,
-      };
-  
-      const responseFinance = await fetch("https://dinosaur.prakasitj.com/financialrecords/addRecord", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(financeFormData),
-      });
-  
-      if (!responseFinance.ok) {
-        const errorData = await responseFinance.json();
-        console.error("Failed to submit financial record:", errorData);
+    const confirmed = window.confirm(
+      "Are you sure you want to complete this action?"
+    );
+    if (confirmed) {
+      const finalAppointmentDate = newAppointmentDate
+        ? new Date(newAppointmentDate).toISOString()
+        : new Date().toISOString(); // Default to now if no date is set
+
+      const isAvailable = await checkAppointmentDateAvailability(
+        finalAppointmentDate
+      );
+
+      if (isAvailable) {
+        setError(
+          "The selected appointment date is already taken. Please choose a different date."
+        );
         return;
       }
-  
-      console.log("Financial record submitted successfully.");
-  
-      for (const treatment of selectedTreatments) {
-        const chosenDoctors = JSON.parse(sessionStorage.getItem("chosenDoctors") || "[]");
-        const doctorId = Array.isArray(chosenDoctors) && chosenDoctors.length > 0 ? chosenDoctors[0] : 0;
-  
-        const medicalRecordData = {
-          cost: treatment.cost,
-          appointment_date: new Date().toISOString(),
-          doctorid: doctorId,
-          patientid: parseInt(sessionStorage.getItem("currentPatientID") || "0", 10),
-          staffid: parseInt(currentStaffId, 10),
-          treatment_id: treatment.treatment_id,
+
+      try {
+        const financeFormData = {
+          record_date: new Date().toISOString(),
+          income_and_expenses: "income",
+          cost: totalCost,
+          staff_id: currentStaffId,
         };
-  
-        const responseMedical = await fetch("https://dinosaur.prakasitj.com/medicalrecords/addRecord", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(medicalRecordData),
-        });
-  
-        if (!responseMedical.ok) {
-          const errorData = await responseMedical.json();
-          console.error("Failed to submit medical record:", errorData);
-          return;
-        }
-  
-        console.log("Medical record submitted successfully.");
-      }
-  
-      const equipmentList = [
-        { itemName: "Needle size 1", itemKey: "item1Stored", equipment_id: 2 },
-        { itemName: "Needle size 2", itemKey: "item2Stored", equipment_id: 3 },
-        { itemName: "Cotton", itemKey: "item3Stored", equipment_id: 1 },
-      ];
-  
-      for (const equipment of equipmentList) {
-        const storedAmount = parseInt(sessionStorage.getItem(equipment.itemKey) || "0", 10);
-  
-        if (storedAmount > 0) { 
-          const requisitionData = {
-            use_amount: storedAmount,
-            requisition_date: new Date().toISOString(),
-            equipment_id: equipment.equipment_id,
-            staff_id: parseInt(currentStaffId, 10),
-          };
-  
-          const responseRequisition = await fetch("https://dinosaur.prakasitj.com/requisition/addRecord", {
+
+        const responseFinance = await fetch(
+          "https://dinosaur.prakasitj.com/financialrecords/addRecord",
+          {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requisitionData),
-          });
-  
-          if (!responseRequisition.ok) {
-            const errorData = await responseRequisition.json();
-            console.error("Failed to add requisition record:", errorData);
-          } else {
-            console.log("Requisition record added successfully.");
+            body: JSON.stringify(financeFormData),
           }
+        );
+
+        if (!responseFinance.ok) {
+          const errorData = await responseFinance.json();
+          console.error("Failed to submit financial record:", errorData);
+          return;
         }
-  
-        const responseEquipment = await fetch(`https://dinosaur.prakasitj.com/equipment/searchbyID/${equipment.equipment_id}`);
-        
-        if (!responseEquipment.ok) {
-          const errorData = await responseEquipment.json();
-          console.error(`Failed to fetch equipment data for ${equipment.itemName}:`, errorData);
-          continue; 
+
+        console.log("Financial record submitted successfully.");
+
+        for (const treatment of selectedTreatments) {
+          const chosenDoctors = JSON.parse(
+            sessionStorage.getItem("chosenDoctors") || "[]"
+          );
+          const doctorId =
+            Array.isArray(chosenDoctors) && chosenDoctors.length > 0
+              ? chosenDoctors[0]
+              : 0;
+
+          const medicalRecordData = {
+            cost: treatment.cost,
+            appointment_date: appointmentDate
+              ? new Date(appointmentDate).toISOString()
+              : new Date().toISOString(),
+            doctorid: doctorId,
+            patientid: parseInt(
+              sessionStorage.getItem("currentPatientID") || "0",
+              10
+            ),
+            staffid: parseInt(currentStaffId, 10),
+            treatment_id: treatment.treatment_id,
+          };
+
+          const responseMedical = await fetch(
+            "https://dinosaur.prakasitj.com/medicalrecords/addRecord",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(medicalRecordData),
+            }
+          );
+
+          if (!responseMedical.ok) {
+            const errorData = await responseMedical.json();
+            console.error("Failed to submit medical record:", errorData);
+            return;
+          }
+
+          console.log("Medical record submitted successfully.");
         }
-  
-        const equipmentData = await responseEquipment.json();
-        const equipmentDetails = equipmentData[0]; 
-        const currentAmount = equipmentDetails.amount; 
-        const price = equipmentDetails.price; 
-  
-        console.log(`Fetched equipment data for ${equipment.itemName}:`, equipmentDetails); 
-        console.log(`Price for ${equipment.itemName}:`, price); 
-  
-        const decreaseEquipmentData = {
+
+        const equipmentList = [
+          {
+            itemName: "Needle Size 1",
+            itemKey: "item1Stored",
+            equipment_id: 2,
+          },
+          {
+            itemName: "Needle Size 2",
+            itemKey: "item2Stored",
+            equipment_id: 3,
+          },
+          { itemName: "Cotton", itemKey: "item3Stored", equipment_id: 1 },
+        ];
+
+        for (const equipment of equipmentList) {
+          const storedAmount = parseInt(
+            sessionStorage.getItem(equipment.itemKey) || "0",
+            10
+          );
+
+          if (storedAmount > 0) {
+            const requisitionData = {
+              use_amount: storedAmount,
+              requisition_date: new Date().toISOString(),
+              equipment_id: equipment.equipment_id,
+              staff_id: parseInt(currentStaffId, 10),
+            };
+
+            const responseRequisition = await fetch(
+              "https://dinosaur.prakasitj.com/requisition/addRecord",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requisitionData),
+              }
+            );
+
+            if (!responseRequisition.ok) {
+              const errorData = await responseRequisition.json();
+              console.error("Failed to add requisition record:", errorData);
+            } else {
+              console.log("Requisition record added successfully.");
+            }
+          }
+
+          const responseEquipment = await fetch(
+            `https://dinosaur.prakasitj.com/equipment/searchbyID/${equipment.equipment_id}`
+          );
+
+          if (!responseEquipment.ok) {
+            const errorData = await responseEquipment.json();
+            console.error(
+              `Failed to fetch equipment data for ${equipment.itemName}:`,
+              errorData
+            );
+            continue;
+          }
+
+          const equipmentData = await responseEquipment.json();
+          const equipmentDetails = equipmentData[0];
+          const currentAmount = equipmentDetails.amount;
+          const price = equipmentDetails.price;
+
+          console.log(
+            `Fetched equipment data for ${equipment.itemName}:`,
+            equipmentDetails
+          );
+          console.log(`Price for ${equipment.itemName}:`, price);
+
+          const decreaseEquipmentData = {
             equipment_id: equipment.equipment_id,
             equipment_name: equipment.itemName,
             amount: storedAmount,
-            price: price, 
-        };
-  
-        const responseDecreaseEquipment = await fetch("https://dinosaur.prakasitj.com/equipment/decreaseEquipment", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(decreaseEquipmentData),
-        });
-  
-        if (!responseDecreaseEquipment.ok) {
+            price: price,
+          };
+
+          const responseDecreaseEquipment = await fetch(
+            "https://dinosaur.prakasitj.com/equipment/decreaseEquipment",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(decreaseEquipmentData),
+            }
+          );
+
+          if (!responseDecreaseEquipment.ok) {
             const errorData = await responseDecreaseEquipment.json();
             console.error("Failed to decrease equipment:", errorData);
-        } else {
-            console.log("Equipment amount decreased successfully.");
-        }
-      }
-
-      if (currentPatient !== "Guest") {
-        const response = await fetch(`https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`);
-        const data = await response.json();
-        const patientUpdateData = {
-          patient_id: parseInt(sessionStorage.getItem("currentPatientID") || "0", 10),
-          name_surname: data[0].name_surname,
-          phone_number: data[0].phone_number,
-          birthday: data[0].birthday,
-          gender: data[0].gender,
-          appointment_date: data[0].appointment_date,
-          course_count: course,
-          first_visit_date: data[0].first_visit_date,
-        };
-
-        try {
-          const responsePatientUpdate = await fetch("https://dinosaur.prakasitj.com/patient/editPatient", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(patientUpdateData),
-          });
-  
-          if (!responsePatientUpdate.ok) {
-            const errorData = await responsePatientUpdate.json();
-            console.error("Failed to update patient data:", errorData);
           } else {
-            console.log("Patient data updated successfully.");
+            console.log("Equipment amount decreased successfully.");
           }
-        } catch (error) {
-          console.error("Network or server error:", error);
         }
-        
-        // if (!responsePatientUpdate.ok) {
-        //   const errorData = await responsePatientUpdate.json();
-        //   console.error("Failed to update patient data:", errorData);
-        // } else {
-        //   console.log("Patient data updated successfully.");
-        // }
-      }
 
-      sessionStorage.setItem("item1Stored", "0");
-      sessionStorage.setItem("item2Stored", "0");
-      sessionStorage.setItem("item3Stored", "0");
-  
-      navigate("/listViewPatient");
-    } catch (error) {
-      console.error("Failed to submit records:", error);
+        if (currentPatient !== "Guest") {
+          const response = await fetch(
+            `https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`
+          );
+          const data = await response.json();
+          const patientUpdateData = {
+            patient_id: parseInt(
+              sessionStorage.getItem("currentPatientID") || "0",
+              10
+            ),
+            name_surname: data[0].name_surname,
+            phone_number: data[0].phone_number,
+            birthday: data[0].birthday,
+            gender: data[0].gender,
+            appointment_date: newAppointmentDate
+              ? new Date(newAppointmentDate).toISOString()
+              : data[0].appointment_date,
+            course_count: course,
+            first_visit_date: data[0].first_visit_date,
+          };
+
+          try {
+            const responsePatientUpdate = await fetch(
+              "https://dinosaur.prakasitj.com/patient/editPatient",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(patientUpdateData),
+              }
+            );
+
+            if (!responsePatientUpdate.ok) {
+              const errorData = await responsePatientUpdate.json();
+              console.error("Failed to update patient data:", errorData);
+            } else {
+              console.log("Patient data updated successfully.");
+            }
+          } catch (error) {
+            console.error("Network or server error:", error);
+          }
+        }
+
+        sessionStorage.setItem("item1Stored", "0");
+        sessionStorage.setItem("item2Stored", "0");
+        sessionStorage.setItem("item3Stored", "0");
+
+        navigate("/listViewPatient");
+      } catch (error) {
+        console.error("Failed to submit records:", error);
+      }
     }
   };
-  
-  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -388,10 +498,12 @@ const TotalCost: React.FC = () => {
               <input
                 type="datetime-local"
                 className="w-[20svw] my-5 mx-5 rounded-md"
-                onChange={handleChange}
-                style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)"
-
-                 }}
+                value={newAppointmentDate}
+                onChange={(e) => {
+                  setNewAppointmentDate(e.target.value);
+                  handleChange(e);
+                }}
+                style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
               />
               <h1 className="ml-5">Date of treatment</h1>
               <div
@@ -399,6 +511,9 @@ const TotalCost: React.FC = () => {
                 style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
               >
                 <h1>{new Date().toISOString().slice(0, 10)}</h1>
+                {error && formData.appointment_date && (
+                  <p className="text-red-500">{error}</p>
+                )}
               </div>
             </div>
           </div>
