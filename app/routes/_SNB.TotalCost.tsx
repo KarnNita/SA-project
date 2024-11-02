@@ -59,6 +59,13 @@ const TotalCost: React.FC = () => {
     setSelectedTreatments(treatments);
   }, []);
 
+
+  useEffect(() => {
+    if (error) {
+       console.log("Error message updated:", error);
+    }
+ }, [error]);
+ 
   useEffect(() => {
     const fetchStaffData = async () => {
       if (currentPatient !== "Guest" && currentUser) {
@@ -185,9 +192,9 @@ const TotalCost: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     if (name === "appointment_date") {
-      setNewAppointmentDate(value); // Set new appointment date
+      setNewAppointmentDate(value);
     }
-    console.log("New Appointment Date:", newAppointmentDate); // Add this line for debugging
+    console.log("New Appointment Date:", newAppointmentDate);
   };
 
   const checkAppointmentDateAvailability = async (appointment_date: string) => {
@@ -223,18 +230,17 @@ const TotalCost: React.FC = () => {
     if (confirmed) {
       const finalAppointmentDate = newAppointmentDate
         ? new Date(newAppointmentDate).toISOString()
-        : new Date().toISOString(); // Default to now if no date is set
+        : new Date().toISOString();
 
       const isAvailable = await checkAppointmentDateAvailability(
         finalAppointmentDate
       );
 
       if (isAvailable) {
-        setError(
-          "The selected appointment date is already taken. Please choose a different date."
-        );
+        setError("The selected appointment date is already taken. Please choose a different date.");
         return;
-      }
+     }
+     
 
       try {
         const financeFormData = {
@@ -511,9 +517,7 @@ const TotalCost: React.FC = () => {
                 style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
               >
                 <h1>{new Date().toISOString().slice(0, 10)}</h1>
-                {error && formData.appointment_date && (
-                  <p className="text-red-500">{error}</p>
-                )}
+                {error && <p className="text-red-500">{error}</p>}
               </div>
             </div>
           </div>
