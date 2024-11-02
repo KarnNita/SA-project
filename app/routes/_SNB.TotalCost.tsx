@@ -1,6 +1,5 @@
 import PatientHeader from "./components/PatientHeader";
-import { useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { useNavigate } from "@remix-run/react";
 
 interface OutputRowProps {
@@ -13,6 +12,13 @@ interface Finance {
   treatment_name: string;
 }
 
+interface Equipment {
+  equipment_id: number;
+  equipment_name: string;
+  price: number;
+  amount: number;
+}
+
 interface Patient {
   patient_id: number;
   name_surname: string;
@@ -20,76 +26,68 @@ interface Patient {
   birthday: string;
   gender: string;
   course_count: number;
-  appointment_date: string; // Keep it as string to handle input correctly
+  appointment_date: string | null;
   first_visit_date: string;
 }
 
 const TotalCost: React.FC = () => {
+  const [equipmentList, setEquipmentList] = useState<Equipment[]>([]);
   const [financeList, setFinanceList] = useState<Finance[]>([]);
-  const [cost, setCost] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [course, setCourse] = useState<number>(0);
   const [baseTotalCost, setBaseTotalCost] = useState<number>(0);
-  const [extraCost, setExtraCost] = useState<number>(0); // New state for additional course fee
+  const [extraCost, setExtraCost] = useState<number>(0);
   const [currentPatientName, setCurrentPatientName] = useState<string>("Guest");
   const [currentPatient, setCurrentPatient] = useState<string>("Guest");
-  const [appointment, setAppointment] = useState<Date[]>([]);
-
-  const [financeFormData, setFinanceFormData] = useState({
-    record_date: "",
-    income_and_expenses: "",
-    cost: "",
-    staff_id: "",
-  });
-
-  const [medicalFormData, setMedicalFormData] = useState({
-    cost: "",
-    appointment_date: "",
-    doctorid: "",
-    patientid: "",
-    staff_id: "",
-    treatment_id: "",
-  });
-
-  const [requisitionFormData1, setRequisitionFormData1] = useState({
-    use_amount: "",
-    requisition_date: "",
-    equipment_id: 1,
-    staff_id: "",
-  });
-
-  const [requisitionFormData2, setRequisitionFormData2] = useState({
-    use_amount: "",
-    requisition_date: "",
-    equipment_id: 2,
-    staff_id: "",
-  });
-
-  const [requisitionFormData3, setRequisitionFormData3] = useState({
-    use_amount: "",
-    requisition_date: "",
-    equipment_id: 3,
-    staff_id: "",
-  });
-
-  const [equipmentFormData, setEquipmentFormData] = useState({
-    equipment_id: "",
-    equipment_name: "",
-    price: "",
-    amount: "",
-  });
-
+  const [currentStaffId, setCurrentStaffId] = useState<string>("");
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [selectedTreatments, setSelectedTreatments] = useState<Finance[]>([]);
+  const [patientData, setPatientData] = useState<Patient | null>(null);
   const [formData, setFormData] = useState<Partial<Patient>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [appointmentDate, setAppointmentDate] = useState<string | null>(null);
+  const [newAppointmentDate, setNewAppointmentDate] = useState<string>("");
 
-  const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
-  const selectedTreatments: Finance[] = JSON.parse(
-    sessionStorage.getItem("selectedTreatments") || "[]"
-  );
+  useEffect(() => {
+    const user = sessionStorage.getItem("currentUser");
+    const treatments = JSON.parse(
+      sessionStorage.getItem("selectedTreatments") || "[]"
+    );
+    setCurrentUser(user);
+    setSelectedTreatments(treatments);
+  }, []);
+
+
+  useEffect(() => {
+    if (error) {
+       console.log("Error message updated:", error);
+    }
+ }, [error]);
+ 
+  useEffect(() => {
+    const fetchStaffData = async () => {
+      if (currentPatient !== "Guest" && currentUser) {
+        const response = await fetch(
+          `https://dinosaur.prakasitj.com/staff/searchbyUsername/${currentUser}`
+        );
+        const data = await response.json();
+
+        if (Array.isArray(data) && data.length > 0) {
+          setCurrentStaffId(data[0].staff_id);
+        } else {
+          console.error("No staff found.");
+        }
+      }
+    };
+    fetchStaffData();
+  }, [currentPatient, currentUser]);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (selectedTreatments.length === 0) return;
+
       try {
         const requests = selectedTreatments.map((treatment) =>
           fetch(
@@ -110,11 +108,9 @@ const TotalCost: React.FC = () => {
         setBaseTotalCost(calculatedBaseTotalCost);
 
         const storedPatientID = sessionStorage.getItem("currentPatientID");
-        const currentPatientIDValue = storedPatientID
-          ? storedPatientID.replace(/^"|"$/g, "")
-          : "Guest";
-
-        setCurrentPatient(currentPatientIDValue);
+        setCurrentPatient(
+          storedPatientID ? storedPatientID.replace(/^"|"$/g, "") : "Guest"
+        );
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -127,14 +123,15 @@ const TotalCost: React.FC = () => {
   useEffect(() => {
     const fetchPatientData = async () => {
       if (currentPatient !== "Guest") {
-        const patientResponse = await fetch(
+        const response = await fetch(
           `https://dinosaur.prakasitj.com/patient/getNamebyID/${currentPatient}`
         );
-        const patientData = await patientResponse.json();
+        const data = await response.json();
 
-        if (Array.isArray(patientData) && patientData.length > 0) {
-          setCurrentPatientName(patientData[0].name_surname);
+        if (Array.isArray(data) && data.length > 0) {
+          setCurrentPatientName(data[0].name_surname);
         } else {
+          console.error("No patient found.");
           setCurrentPatientName("Guest");
         }
       }
@@ -145,14 +142,15 @@ const TotalCost: React.FC = () => {
   useEffect(() => {
     const fetchCourseData = async () => {
       if (currentPatient !== "Guest") {
-        const courseResponse = await fetch(
+        const response = await fetch(
           `https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`
         );
-        const courseData = await courseResponse.json();
+        const data = await response.json();
 
-        if (Array.isArray(courseData) && courseData.length > 0) {
-          setCourse(courseData[0].course_count);
+        if (Array.isArray(data) && data.length > 0) {
+          setCourse(data[0].course_count);
         } else {
+          console.error("No course data found.");
           setCourse(0);
         }
       }
@@ -160,165 +158,305 @@ const TotalCost: React.FC = () => {
     fetchCourseData();
   }, [currentPatient]);
 
+  useEffect(() => {
+    const storedEquipmentData = JSON.parse(
+      sessionStorage.getItem("equipmentData") || "[]"
+    );
+
+    const initialEquipmentList: Equipment[] = storedEquipmentData.map(
+      (item: any) => ({
+        equipment_id: item.equipment_id,
+        equipment_name: item.equipment_name,
+        price: item.price,
+        amount: item.amount,
+      })
+    );
+
+    setEquipmentList(initialEquipmentList);
+  }, []);
+
   const handleAddCourseFee = () => {
-    setCourse(course + 10);
-    setExtraCost((prevExtra) => prevExtra + 5500);
+    setCourse(course + 9);
+    setBaseTotalCost(5500);
   };
 
   const handleUseCourse = () => {
     if (course > 0) {
-      setCourse(course - 1); // Decrease the course count by 1
-      setExtraCost((prevExtra) => prevExtra - 600); // Adjust extra cost if using course
+      setCourse(course - 1);
+      setBaseTotalCost(0);
     }
   };
 
-  const totalCost = baseTotalCost + extraCost;
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    if (name === "appointment_date") {
+      setNewAppointmentDate(value);
+    }
+    console.log("New Appointment Date:", newAppointmentDate);
+  };
+
+  const checkAppointmentDateAvailability = async (appointment_date: string) => {
+    try {
+      const response = await fetch(
+        `https://dinosaur.prakasitj.com/patient/searchbyAppointmentDate/${appointment_date}`
+      );
+
+      if (!response.ok) {
+        const errorDetails = await response.text();
+        throw new Error(`Failed to check appointment date: ${errorDetails}`);
+      }
+
+      const result = await response.json();
+      console.log("Response from searchbyAppointmentDate:", result);
+
+      return result.length > 0;
+    } catch (error) {
+      console.error("Error in checkAppointmentDateAvailability:", error);
+      setError(
+        "Error checking appointment date availability. Please try again."
+      );
+      return false;
+    }
+  };
+
+  const totalCost = baseTotalCost;
 
   const handleDone = async () => {
-    try {
-      // Assuming `currentPatientId` holds the patient's ID and newCourseCount is calculated based on selected treatments
-      const newCourseCount = course;
-  
-      // Update patient course_count
-      await fetch(`https://dinosaur.prakasitj.com/patient/editPatient`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          patient_id: currentPatient,
-          course_count: newCourseCount,
-          appointment_date: appointment,
-        }),
-      });
+    const confirmed = window.confirm(
+      "Are you sure you want to complete this action?"
+    );
+    if (confirmed) {
+      const finalAppointmentDate = newAppointmentDate
+        ? new Date(newAppointmentDate).toISOString()
+        : new Date().toISOString();
 
-      submitToApi();
-  
-      console.log("Data submitted successfully.");
-    } catch (error) {
-      console.error("Failed to submit data:", error);
-    }
-  };
+      const isAvailable = await checkAppointmentDateAvailability(
+        finalAppointmentDate
+      );
 
-  const submitFinancialData = async () => {
-    try {
-      const response = await fetch("https://dinosaur.prakasitj.com/financialrecords/addRecord", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(financeFormData),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add financial data.");
-      }
-    } catch (error) {
-      console.error("Error submitting financial data:", error);
-      setError("Error submitting financial data. Please try again.");
-    }
-  };
-  
-  const submitMedicalData = async () => {
-    try {
-      const response = await fetch("https://dinosaur.prakasitj.com/medicalrecords/addRecord", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(medicalFormData),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to add medical data.");
-      }
-    } catch (error) {
-      console.error("Error submitting medical data:", error);
-      setError("Error submitting medical data. Please try again.");
-    }
-  };
-  
-  const submitEquipmentData = async () => {
-    try {
-      if (equipmentFormData.equipment_id) {
-        const response = await fetch("https://dinosaur.prakasitj.com/equipment/editAmount", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(equipmentFormData),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to save equipment data.");
-        }
-      }
-    } catch (error) {
-      console.error("Error submitting equipment data:", error);
-      setError("Error submitting equipment data. Please try again.");
-    }
-  };
-  
-  const submitToApi = async () => {
-    try {
-      // Update finance data based on total cost
-      setFinanceFormData({
-        ...financeFormData,
-        record_date: new Date().toISOString().split("T")[0],
-        income_and_expenses: "income",
-        cost: totalCost.toString(),
-        staff_id: sessionStorage.getItem("currentUser") || "",
-      });
-  
-      // Set medical form data including selected appointment date
-      setMedicalFormData({
-        ...medicalFormData,
-        cost: totalCost.toString(),
-        appointment_date: new Date().toISOString().split("T")[0], //This has to be today date, right?
-        doctorid: sessionStorage.getItem("chosenDoctor") || "",
-        patientid: currentPatient,
-        staff_id: sessionStorage.getItem("currentUser") || "",
-        treatment_id: financeList.length ? JSON.stringify(financeList[0].treatment_id) : "",
-      });
-  
-      // Use Promise.all to submit requisition records concurrently
-      const requisitionPromises = [
-        submitRequisitionData(requisitionFormData1),
-        submitRequisitionData(requisitionFormData2),
-        submitRequisitionData(requisitionFormData3),
-      ];
-  
-      await submitFinancialData();
-      await submitMedicalData();
-      await submitEquipmentData();
+      if (isAvailable) {
+        setError("The selected appointment date is already taken. Please choose a different date.");
+        return;
+     }
+     
 
-      // Await all requisition submissions and handle responses
-      await Promise.all(requisitionPromises);
-  
-      // Navigate back after successful submission
-      navigate("/listViewPatient");
-    } catch (error) {
-      console.error("Error submitting data:", error);
-      setError("Error submitting data. Please check required fields and try again.");
-    }
-  };
-  
-  const submitRequisitionData = async (requisitionFormData: { use_amount?: string; requisition_date?: string; equipment_id: any; staff_id?: string; }) => {
-    try {
-      const items = [requisitionFormData.equipment_id]; 
-      // Loop through each item in requisitionFormData and submit it if it has data
-      for (let i = 0; i < items.length; i++) {
-        if (items[i]) {
-          const response = await fetch("https://dinosaur.prakasitj.com/requisitionrecords/addRecord", {
+      try {
+        const financeFormData = {
+          record_date: new Date().toISOString(),
+          income_and_expenses: "income",
+          cost: totalCost,
+          staff_id: currentStaffId,
+        };
+
+        const responseFinance = await fetch(
+          "https://dinosaur.prakasitj.com/financialrecords/addRecord",
+          {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              use_amount: items[i].amount,
-              requisition_date: items[i].requisition_date,
-              equipment_id: items[i], // assuming this exists and is correct
-              staff_id: items[i].staff_id,
-            }),
-          });
-  
-          if (!response.ok) {
-            throw new Error(`Failed to add requisition data for item ${i + 1}`);
+            body: JSON.stringify(financeFormData),
+          }
+        );
+
+        if (!responseFinance.ok) {
+          const errorData = await responseFinance.json();
+          console.error("Failed to submit financial record:", errorData);
+          return;
+        }
+
+        console.log("Financial record submitted successfully.");
+
+        for (const treatment of selectedTreatments) {
+          const chosenDoctors = JSON.parse(
+            sessionStorage.getItem("chosenDoctors") || "[]"
+          );
+          const doctorId =
+            Array.isArray(chosenDoctors) && chosenDoctors.length > 0
+              ? chosenDoctors[0]
+              : 0;
+
+          const medicalRecordData = {
+            cost: treatment.cost,
+            appointment_date: appointmentDate
+              ? new Date(appointmentDate).toISOString()
+              : new Date().toISOString(),
+            doctorid: doctorId,
+            patientid: parseInt(
+              sessionStorage.getItem("currentPatientID") || "0",
+              10
+            ),
+            staffid: parseInt(currentStaffId, 10),
+            treatment_id: treatment.treatment_id,
+          };
+
+          const responseMedical = await fetch(
+            "https://dinosaur.prakasitj.com/medicalrecords/addRecord",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(medicalRecordData),
+            }
+          );
+
+          if (!responseMedical.ok) {
+            const errorData = await responseMedical.json();
+            console.error("Failed to submit medical record:", errorData);
+            return;
+          }
+
+          console.log("Medical record submitted successfully.");
+        }
+
+        const equipmentList = [
+          {
+            itemName: "Needle Size 1",
+            itemKey: "item1Stored",
+            equipment_id: 2,
+          },
+          {
+            itemName: "Needle Size 2",
+            itemKey: "item2Stored",
+            equipment_id: 3,
+          },
+          { itemName: "Cotton", itemKey: "item3Stored", equipment_id: 1 },
+        ];
+
+        for (const equipment of equipmentList) {
+          const storedAmount = parseInt(
+            sessionStorage.getItem(equipment.itemKey) || "0",
+            10
+          );
+
+          if (storedAmount > 0) {
+            const requisitionData = {
+              use_amount: storedAmount,
+              requisition_date: new Date().toISOString(),
+              equipment_id: equipment.equipment_id,
+              staff_id: parseInt(currentStaffId, 10),
+            };
+
+            const responseRequisition = await fetch(
+              "https://dinosaur.prakasitj.com/requisition/addRecord",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requisitionData),
+              }
+            );
+
+            if (!responseRequisition.ok) {
+              const errorData = await responseRequisition.json();
+              console.error("Failed to add requisition record:", errorData);
+            } else {
+              console.log("Requisition record added successfully.");
+            }
+          }
+
+          const responseEquipment = await fetch(
+            `https://dinosaur.prakasitj.com/equipment/searchbyID/${equipment.equipment_id}`
+          );
+
+          if (!responseEquipment.ok) {
+            const errorData = await responseEquipment.json();
+            console.error(
+              `Failed to fetch equipment data for ${equipment.itemName}:`,
+              errorData
+            );
+            continue;
+          }
+
+          const equipmentData = await responseEquipment.json();
+          const equipmentDetails = equipmentData[0];
+          const currentAmount = equipmentDetails.amount;
+          const price = equipmentDetails.price;
+
+          console.log(
+            `Fetched equipment data for ${equipment.itemName}:`,
+            equipmentDetails
+          );
+          console.log(`Price for ${equipment.itemName}:`, price);
+
+          const decreaseEquipmentData = {
+            equipment_id: equipment.equipment_id,
+            equipment_name: equipment.itemName,
+            amount: storedAmount,
+            price: price,
+          };
+
+          const responseDecreaseEquipment = await fetch(
+            "https://dinosaur.prakasitj.com/equipment/decreaseEquipment",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(decreaseEquipmentData),
+            }
+          );
+
+          if (!responseDecreaseEquipment.ok) {
+            const errorData = await responseDecreaseEquipment.json();
+            console.error("Failed to decrease equipment:", errorData);
+          } else {
+            console.log("Equipment amount decreased successfully.");
           }
         }
+
+        if (currentPatient !== "Guest") {
+          const response = await fetch(
+            `https://dinosaur.prakasitj.com/patient/searchbyID/${currentPatient}`
+          );
+          const data = await response.json();
+          const patientUpdateData = {
+            patient_id: parseInt(
+              sessionStorage.getItem("currentPatientID") || "0",
+              10
+            ),
+            name_surname: data[0].name_surname,
+            phone_number: data[0].phone_number,
+            birthday: data[0].birthday,
+            gender: data[0].gender,
+            appointment_date: newAppointmentDate
+              ? new Date(newAppointmentDate).toISOString()
+              : data[0].appointment_date,
+            course_count: course,
+            first_visit_date: data[0].first_visit_date,
+          };
+
+          try {
+            const responsePatientUpdate = await fetch(
+              "https://dinosaur.prakasitj.com/patient/editPatient",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(patientUpdateData),
+              }
+            );
+
+            if (!responsePatientUpdate.ok) {
+              const errorData = await responsePatientUpdate.json();
+              console.error("Failed to update patient data:", errorData);
+            } else {
+              console.log("Patient data updated successfully.");
+            }
+          } catch (error) {
+            console.error("Network or server error:", error);
+          }
+        }
+
+        sessionStorage.setItem("item1Stored", "0");
+        sessionStorage.setItem("item2Stored", "0");
+        sessionStorage.setItem("item3Stored", "0");
+
+        navigate("/listViewPatient");
+      } catch (error) {
+        console.error("Failed to submit records:", error);
       }
-    } catch (error) {
-      console.error("Error submitting requisition data:", error);
-      setError("Error submitting requisition data. Please try again.");
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-row justify-center items-start w-[80svw] pt-10 pb-7">
@@ -366,6 +504,11 @@ const TotalCost: React.FC = () => {
               <input
                 type="datetime-local"
                 className="w-[20svw] my-5 mx-5 rounded-md"
+                value={newAppointmentDate}
+                onChange={(e) => {
+                  setNewAppointmentDate(e.target.value);
+                  handleChange(e);
+                }}
                 style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
               />
               <h1 className="ml-5">Date of treatment</h1>
@@ -374,6 +517,7 @@ const TotalCost: React.FC = () => {
                 style={{ filter: "drop-shadow(0 0.25rem 0.125rem #A6AFB0)" }}
               >
                 <h1>{new Date().toISOString().slice(0, 10)}</h1>
+                {error && <p className="text-red-500">{error}</p>}
               </div>
             </div>
           </div>
